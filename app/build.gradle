@@ -1,0 +1,78 @@
+plugins {
+    id 'com.android.application'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+}
+
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.3"
+
+    defaultConfig {
+        applicationId "com.kemriwellcome.dm.prisms"
+        minSdkVersion 16
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    implementation 'androidx.navigation:navigation-fragment:2.3.5'
+    implementation 'androidx.navigation:navigation-ui:2.3.5'
+
+    implementation 'com.android.volley:volley:1.2.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0'
+    implementation 'com.fxn769:stash:1.3.2'
+    implementation 'com.hbb20:ccp:2.2.3'
+
+    //butterknife
+    implementation 'com.jakewharton:butterknife:10.2.0'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
+
+    implementation 'com.wang.avi:library:2.1.3'
+    implementation 'com.mikhaellopez:circularimageview:3.2.0'          // circle image view
+    implementation 'com.github.bumptech.glide:glide:3.7.0'             // image loader
+    implementation 'com.balysv:material-ripple:1.0.2'                  // ripple effect
+    implementation 'com.airbnb.android:lottie:3.4.4'                   //lottie
+    implementation 'com.google.android.material:material:1.3.0'        //material
+    implementation 'com.facebook.shimmer:shimmer:0.1.0@aar'             // shimmer layout
+
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:27.0.0')
+
+    // Declare the dependency for the Firebase Authentication library
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-auth'
+
+    // Declare the dependencies for the Crashlytics and Analytics libraries
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
+}
