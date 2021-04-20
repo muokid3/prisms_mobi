@@ -3,8 +3,6 @@ package com.kemriwellcome.dm.prisms.dependencies;
 public class Constants {
     /*Stash Variables*/
     public static String USER = "LOGGED_IN_USER";
-    public static String PROFILE = "CURRENT_PROFILE";
-    public static String CHECKOUT_URL = "CHECKOUT_URL";
     public static String END_POINT = "END_POINT_URL";
 
     public static String VERIFICATION_SENT = "VERIFICATION_SENT";
@@ -15,8 +13,7 @@ public class Constants {
 
     /*API Variables*/
 
-    public static String SHORT_CODE = "4043889";
-    public static String API_VERSION = "afyacash_api_v0";
+    public static String API_VERSION = "prisms_api_v0";
 
     public static String LOGIN = "auth/login";
     public static String SEND_TEMP_OTP = "auth/send_temp_otp";
