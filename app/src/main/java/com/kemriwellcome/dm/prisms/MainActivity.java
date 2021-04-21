@@ -81,8 +81,12 @@ public class MainActivity extends AppCompatActivity {
         TextView drawer_name = (TextView) headerLayout.findViewById(R.id.drawer_name);
         TextView drawer_phone = (TextView) headerLayout.findViewById(R.id.drawer_phone);
 
-        drawer_name.setText(loggedInUser.getTitle()+" "+loggedInUser.getFirst_name()+" "+loggedInUser.getLast_name());
-        drawer_phone.setText(loggedInUser.getEmail());
+        if (loggedInUser != null){
+            drawer_name.setText(loggedInUser.getTitle()+" "+loggedInUser.getFirst_name()+" "+loggedInUser.getLast_name());
+            drawer_phone.setText(loggedInUser.getEmail());
+        }
+
+
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
