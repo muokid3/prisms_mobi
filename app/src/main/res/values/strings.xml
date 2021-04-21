@@ -59,6 +59,21 @@
     <string name="login">Login</string>
     <string name="forgot_your_pin">Forgot your password?</string>
     <string name="hey_there_nice_to_see_you_again">Hey there! Nice to see you again!</string>
+    <string name="processing">Processing...</string>
+    <string name="allocation_rates">Allocation Rates</string>
+    <string name="my_actions">My Actions</string>
+    <string name="home_desc">Welcome to PRISMS (pilot implementation of Short Message Service for randomization)</string>
+    <string name="you_do_not_have_any_studies_assigned_to_you_yet">You do not have any studies assigned to you yet</string>
+    <string name="your_studies_will_appear_here">Your studies will appear here</string>
+    <string name="your_studies_will_appear_here_click_on_any_to_view_the_details_and_perform_randomizations">Your studies will appear here. Click on any to view the details and perform randomizations</string>
+    <string name="logout">Logout</string>
+    <string name="you_can_monitor_messaging_and_sms_randomization_from_this_page">You can monitor messaging and SMS randomization from this page</string>
+    <string name="manage_available_sites_from_this_page_you_can_create_update_and_delete_sites_from_here">Manage available sites from this page, you can create, update and delete sites from here</string>
+    <string name="create_site">create site</string>
+    <string name="available_sites">Available sites</string>
+    <string name="you_can_create_edit_and_delete_studies_from_this_page">You can create, edit and delete studies from this page</string>
+    <string name="create_study">create study</string>
+    <string name="available_studies">Available studies</string>
 
 
 </resources>

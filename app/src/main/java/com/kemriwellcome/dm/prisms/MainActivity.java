@@ -3,6 +3,7 @@ package com.kemriwellcome.dm.prisms;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.ImageView;
@@ -20,6 +21,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.kemriwellcome.dm.prisms.dependencies.Constants;
+import com.kemriwellcome.dm.prisms.dependencies.PrismsApplication;
 import com.kemriwellcome.dm.prisms.models.User;
 
 import androidx.annotation.NonNull;
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        PrismsApplication.handleSSLHandshake();
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -77,10 +81,13 @@ public class MainActivity extends AppCompatActivity {
         TextView drawer_name = (TextView) headerLayout.findViewById(R.id.drawer_name);
         TextView drawer_phone = (TextView) headerLayout.findViewById(R.id.drawer_phone);
 
+        drawer_name.setText(loggedInUser.getTitle()+" "+loggedInUser.getFirst_name()+" "+loggedInUser.getLast_name());
+        drawer_phone.setText(loggedInUser.getEmail());
+
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home,R.id.nav_profile,R.id.nav_studies)
                 .setOpenableLayout(drawer)
                 .build();
         //NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -102,6 +109,30 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_logout:
+                signout();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    public void signout(){
+        // Firebase sign out
+        mAuth.signOut();
+
+        Stash.clearAll();
+
+        Intent intent = new Intent(MainActivity.this, AuthActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+        finish();
+    }
+
 
     @Override
     public boolean onSupportNavigateUp() {

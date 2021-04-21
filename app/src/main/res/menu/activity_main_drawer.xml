@@ -23,7 +23,7 @@
             android:title="@string/sms" />
 
         <item
-            android:id="@+id/nav_sites"
+            android:id="@+id/nav_site_main"
             android:icon="@drawable/ic_site"
             android:title="@string/sites" />
         <item

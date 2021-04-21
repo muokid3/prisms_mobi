@@ -7,19 +7,25 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.kemriwellcome.dm.prisms.ui.home.HomeFragment"
+        android:name="com.kemriwellcome.dm.prisms.fragments.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
-
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.kemriwellcome.dm.prisms.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
-
+        android:id="@+id/nav_studies"
+        android:name="com.kemriwellcome.dm.prisms.fragments.MyStudiesFragment"
+        android:label="Studies" />
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.kemriwellcome.dm.prisms.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_profile"
+        android:name="com.kemriwellcome.dm.prisms.fragments.ProfileFragment"
+        android:label="Profile" />
+    <fragment
+        android:id="@+id/nav_sms"
+        android:name="com.kemriwellcome.dm.prisms.fragments.SmsFragment"
+        android:label="Sms" />
+    <fragment
+        android:id="@+id/nav_site_main"
+        android:name="com.kemriwellcome.dm.prisms.fragments.sites.SiteMainFragment"
+        android:label="Sites/Studies" />
+
+
 </navigation>

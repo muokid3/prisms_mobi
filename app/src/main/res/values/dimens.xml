@@ -26,4 +26,31 @@
     <dimen name="spacing_xxxlarge">55dp</dimen>
     <dimen name="appbar_padding_top">8dp</dimen>
 
+
+
+    <dimen name="placeholder_text_height">8dp</dimen>
+
+    <dimen name="shr_product_grid_reveal_height">200dp</dimen>
+
+    <!-- Dimens for staggered asymmetric grid layout cards-->
+    <dimen name="shr_staggered_product_grid_spacing_large">30dp</dimen>
+    <dimen name="shr_staggered_product_grid_spacing_small">26dp</dimen>
+    <dimen name="shr_staggered_product_grid_margin_top_first">72dp</dimen>
+    <dimen name="shr_staggered_product_grid_margin_top_second">56dp</dimen>
+    <dimen name="shr_staggered_product_grid_margin_top_third">152dp</dimen>
+    <dimen name="shr_staggered_product_grid_card_width_portrait">165dp</dimen>
+    <dimen name="shr_staggered_product_grid_card_height_portrait">247dp</dimen>
+    <dimen name="shr_staggered_product_grid_card_width_landscape">188dp</dimen>
+    <dimen name="shr_staggered_product_grid_card_height_landscape">140dp</dimen>
+
+    <!-- slider-->
+    <dimen name="dots_height">30dp</dimen>
+    <dimen name="dots_margin_bottom">20dp</dimen>
+    <dimen name="img_width_height">200dp</dimen>
+    <dimen name="slide_title">30sp</dimen>
+    <dimen name="slide_desc">16sp</dimen>
+    <dimen name="desc_padding">40dp</dimen>
+    <dimen name="list_item_spacing">16dp</dimen>
+    <dimen name="list_item_spacing_half">8dp</dimen>
+
 </resources>
