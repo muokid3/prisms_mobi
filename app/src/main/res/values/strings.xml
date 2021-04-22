@@ -78,6 +78,20 @@
     <string name="create_a_new_study">Create a new study</string>
     <string name="create_a_new_site">Create a new site</string>
     <string name="site_name">Site name</string>
+    <string name="upload_allocation_list">Upload allocation list</string>
+    <string name="select_site">Select Site</string>
+    <string name="select_study">Select Study</string>
+    <string name="select_stratum">select stratum</string>
+    <string name="select_file_to_upload">select file to upload</string>
+    <string name="upload_list">upload list</string>
+    <string name="upload_allocation_lists_to_site_specific_studies_here">Upload allocation lists to site specific studies here</string>
+    <string name="allocation_lists">Allocation lists</string>
+    <string name="strata">Strata</string>
+    <string name="available_strata">Available strata</string>
+    <string name="create_stratum">Create stratum</string>
+    <string name="create_and_manage_strata_from_this_page">Create and manage strata from this page</string>
+    <string name="create_new_stratum">Create new stratum</string>
+    <string name="stratum">Stratum</string>
 
 
 </resources>

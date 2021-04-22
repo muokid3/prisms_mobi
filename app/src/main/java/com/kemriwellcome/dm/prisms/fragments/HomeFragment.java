@@ -108,7 +108,7 @@ public class HomeFragment extends Fragment {
         allocation_layout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.nav_allocation);
+                NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.nav_allocation);
             }
         });
 

@@ -1,4 +1,4 @@
-package com.kemriwellcome.dm.prisms.fragments.sites;
+package com.kemriwellcome.dm.prisms.fragments.allocation;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -29,7 +29,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 
-public class SitesFragment extends Fragment {
+public class StrataFragment extends Fragment {
 
 
     private Unbinder unbinder;
@@ -45,11 +45,11 @@ public class SitesFragment extends Fragment {
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
 
-    @BindView(R.id.no_sites)
-    LinearLayout no_sites;
+    @BindView(R.id.no_strata)
+    LinearLayout no_strata;
 
-    @BindView(R.id.btn_create_site)
-    Button btn_create_site;
+    @BindView(R.id.btn_create_stratum)
+    Button btn_create_stratum;
 
 
     @Override
@@ -65,15 +65,15 @@ public class SitesFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_sites, container, false);
+        root = inflater.inflate(R.layout.fragment_strata, container, false);
         unbinder = ButterKnife.bind(this, root);
 
         loggedInUser = (User) Stash.getObject(Constants.USER, User.class);
 
-        btn_create_site.setOnClickListener(new View.OnClickListener() {
+        btn_create_stratum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createSiteDialog();
+                createStratumDialog();
             }
         });
 
@@ -133,25 +133,25 @@ public class SitesFragment extends Fragment {
         super.onPause();
     }
 
-    private void createSiteDialog() {
+    private void createStratumDialog() {
         final Dialog dialog = new Dialog( context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-        dialog.setContentView(R.layout.dialog_create_site);
+        dialog.setContentView(R.layout.dialog_create_stratum);
         dialog.setCancelable(true);
 
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
         lp.copyFrom(dialog.getWindow().getAttributes());
         lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        EditText siteET = dialog.findViewById(R.id.et_site);
+        EditText stratumET = dialog.findViewById(R.id.et_stratum);
 
 
 
-        ((Button) dialog.findViewById(R.id.btn_create_site)).setOnClickListener(new View.OnClickListener() {
+        ((Button) dialog.findViewById(R.id.btn_create_stratum)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (TextUtils.isEmpty(siteET.getText().toString())) {
-                    siteET.setError("Please enter the site name");
+                if (TextUtils.isEmpty(stratumET.getText().toString())) {
+                    stratumET.setError("Please enter the stratum");
                 } else {
 //                    showProgressDialog();
 //                    createStudy(studyET.getText().toString());

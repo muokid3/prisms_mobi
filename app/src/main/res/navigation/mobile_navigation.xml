@@ -26,6 +26,10 @@
         android:id="@+id/nav_site_main"
         android:name="com.kemriwellcome.dm.prisms.fragments.sites.SiteMainFragment"
         android:label="Sites/Studies" />
+    <fragment
+        android:id="@+id/nav_allocation"
+        android:name="com.kemriwellcome.dm.prisms.fragments.allocation.AllocationMainFragment"
+        android:label="Allocation Lists" />
 
 
 </navigation>

@@ -1,4 +1,4 @@
-package com.kemriwellcome.dm.prisms.fragments.sites;
+package com.kemriwellcome.dm.prisms.fragments.allocation;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -29,7 +30,7 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 
-public class SitesFragment extends Fragment {
+public class UploadListFragment extends Fragment {
 
 
     private Unbinder unbinder;
@@ -39,17 +40,20 @@ public class SitesFragment extends Fragment {
     private User loggedInUser;
 
 
-    @BindView(R.id.shimmer_my_container)
-    ShimmerFrameLayout shimmer_my_container;
+    @BindView(R.id.btn_upload_list)
+    Button btn_upload_list;
 
-    @BindView(R.id.recyclerView)
-    RecyclerView recyclerView;
+    @BindView(R.id.select_file)
+    Button select_file;
 
-    @BindView(R.id.no_sites)
-    LinearLayout no_sites;
+    @BindView(R.id.stratumSpinner)
+    Spinner stratumSpinner;
 
-    @BindView(R.id.btn_create_site)
-    Button btn_create_site;
+    @BindView(R.id.studySpinner)
+    Spinner studySpinner;
+
+    @BindView(R.id.siteSpinner)
+    Spinner siteSpinner;
 
 
     @Override
@@ -65,50 +69,10 @@ public class SitesFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        root = inflater.inflate(R.layout.fragment_sites, container, false);
+        root = inflater.inflate(R.layout.fragment_upload_list, container, false);
         unbinder = ButterKnife.bind(this, root);
 
         loggedInUser = (User) Stash.getObject(Constants.USER, User.class);
-
-        btn_create_site.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createSiteDialog();
-            }
-        });
-
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setHasFixedSize(true);
-
-        //set data and list adapter
-        //recyclerView.setAdapter(mAdapter);
-
-
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//
-//                if (!recyclerView.canScrollHorizontally(1)) {
-//                    if (myShouldLoadMore && !MY_NEXT_LINK.equals("null")) {
-//                        loadMore();
-//                    }
-//                }
-//            }
-//        });
-
-//        mAdapter.setOnItemClickListener(new ResourcesAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(int position) {
-//                Resource resource = resourceArrayList.get(position);
-//
-//                Bundle bundle = new Bundle();
-//                bundle.putSerializable("resource", resource);
-//                NavHostFragment.findNavController(CMESTabFragment.this).navigate(R.id.nac_resource_details, bundle);
-//            }
-//        });
-
 
 
 
@@ -124,45 +88,11 @@ public class SitesFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        shimmer_my_container.startShimmerAnimation();
     }
 
     @Override
     public void onPause() {
-        shimmer_my_container.stopShimmerAnimation();
         super.onPause();
-    }
-
-    private void createSiteDialog() {
-        final Dialog dialog = new Dialog( context);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
-        dialog.setContentView(R.layout.dialog_create_site);
-        dialog.setCancelable(true);
-
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
-        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-        EditText siteET = dialog.findViewById(R.id.et_site);
-
-
-
-        ((Button) dialog.findViewById(R.id.btn_create_site)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (TextUtils.isEmpty(siteET.getText().toString())) {
-                    siteET.setError("Please enter the site name");
-                } else {
-//                    showProgressDialog();
-//                    createStudy(studyET.getText().toString());
-                    dialog.dismiss();
-                }
-            }
-        });
-
-
-        dialog.show();
-        dialog.getWindow().setAttributes(lp);
     }
 
 
