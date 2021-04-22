@@ -1,10 +1,16 @@
 package com.kemriwellcome.dm.prisms.fragments.sites;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
@@ -42,6 +48,9 @@ public class StudiesFragment extends Fragment {
     @BindView(R.id.no_studies)
     LinearLayout no_studies;
 
+    @BindView(R.id.btn_create_study)
+    Button btn_create_study;
+
 
     @Override
     public void onAttach(Context ctx) {
@@ -60,6 +69,13 @@ public class StudiesFragment extends Fragment {
         unbinder = ButterKnife.bind(this, root);
 
         loggedInUser = (User) Stash.getObject(Constants.USER, User.class);
+
+        btn_create_study.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createStudyDialog();
+            }
+        });
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
@@ -116,6 +132,39 @@ public class StudiesFragment extends Fragment {
         shimmer_my_container.stopShimmerAnimation();
         super.onPause();
     }
+
+    private void createStudyDialog() {
+        final Dialog dialog = new Dialog( context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
+        dialog.setContentView(R.layout.dialog_create_study);
+        dialog.setCancelable(true);
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
+        EditText studyET = dialog.findViewById(R.id.et_study);
+
+
+
+        ((Button) dialog.findViewById(R.id.btn_create_study)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (TextUtils.isEmpty(studyET.getText().toString())) {
+                    studyET.setError("Please enter the study name");
+                } else {
+//                    showProgressDialog();
+//                    createStudy(studyET.getText().toString());
+                    dialog.dismiss();
+                }
+            }
+        });
+
+
+        dialog.show();
+        dialog.getWindow().setAttributes(lp);
+    }
+
 
 
 //    private void firstLoad() {

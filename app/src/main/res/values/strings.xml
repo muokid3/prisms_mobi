@@ -74,6 +74,10 @@
     <string name="you_can_create_edit_and_delete_studies_from_this_page">You can create, edit and delete studies from this page</string>
     <string name="create_study">create study</string>
     <string name="available_studies">Available studies</string>
+    <string name="study_name">Study name</string>
+    <string name="create_a_new_study">Create a new study</string>
+    <string name="create_a_new_site">Create a new site</string>
+    <string name="site_name">Site name</string>
 
 
 </resources>
