@@ -174,7 +174,7 @@ public class UploadListFragment extends Fragment {
                     fileUri = data.getData();
                     filePath = fileUri.getPath();
 
-                    Toast.makeText(context, "File path:::"+filePath, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "File path:::"+filePath, Toast.LENGTH_SHORT).show();
 
                     //needs storage permissions
                     File file = new File(fileUri.getPath());
