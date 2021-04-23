@@ -218,13 +218,13 @@
                 android:layout_marginTop="@dimen/spacing_mlarge"
                 android:layout_marginBottom="@dimen/fab_margin"/>
 
-            <android.widget.Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_upload_list"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/upload_list"
                 android:textAllCaps="true"
-                android:theme="@style/Button.Accent"
+                android:backgroundTint="@color/colorAccent"
                 android:textColor="@android:color/white"
                 android:paddingStart="@dimen/activity_horizontal_margin"
                 android:paddingEnd="@dimen/activity_horizontal_margin"

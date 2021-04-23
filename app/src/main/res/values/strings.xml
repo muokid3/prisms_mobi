@@ -92,6 +92,7 @@
     <string name="create_and_manage_strata_from_this_page">Create and manage strata from this page</string>
     <string name="create_new_stratum">Create new stratum</string>
     <string name="stratum">Stratum</string>
+    <string name="study_detail">Study detail</string>
 
 
 </resources>

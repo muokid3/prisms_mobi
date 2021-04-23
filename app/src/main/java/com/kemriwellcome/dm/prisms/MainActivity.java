@@ -25,6 +25,7 @@ import com.kemriwellcome.dm.prisms.dependencies.PrismsApplication;
 import com.kemriwellcome.dm.prisms.models.User;
 
 import androidx.annotation.NonNull;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -42,6 +43,13 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private User loggedInUser;
 
+    private static MainActivity inst;
+    public static MainActivity getInstance() {
+        return inst;
+    }
+
+    private CoordinatorLayout coordinator_layout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +60,10 @@ public class MainActivity extends AppCompatActivity {
         PrismsApplication.handleSSLHandshake();
 
         mAuth = FirebaseAuth.getInstance();
+
+        inst = this;
+        coordinator_layout = findViewById(R.id.coordinator_layout);
+
 
         loggedInUser = (User) Stash.getObject(Constants.USER, User.class);
         //coordinator_layout = findViewById(R.id.coordinator_layout);
@@ -137,6 +149,11 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+
+    public void snack(String message){
+        Snackbar.make(coordinator_layout, message, Snackbar.LENGTH_LONG)
+                .show();
+    }
 
     @Override
     public boolean onSupportNavigateUp() {

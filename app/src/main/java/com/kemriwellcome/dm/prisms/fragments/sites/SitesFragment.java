@@ -1,9 +1,12 @@
 package com.kemriwellcome.dm.prisms.fragments.sites;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,17 +15,42 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.fxn.stash.Stash;
+import com.google.android.material.snackbar.Snackbar;
+import com.kemriwellcome.dm.prisms.MainActivity;
 import com.kemriwellcome.dm.prisms.R;
+import com.kemriwellcome.dm.prisms.adapters.SitesAdapter;
 import com.kemriwellcome.dm.prisms.dependencies.Constants;
+import com.kemriwellcome.dm.prisms.dependencies.Dialogs;
+import com.kemriwellcome.dm.prisms.dependencies.PrismsApplication;
+import com.kemriwellcome.dm.prisms.dependencies.VolleyErrors;
+import com.kemriwellcome.dm.prisms.models.Site;
 import com.kemriwellcome.dm.prisms.models.User;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,6 +65,11 @@ public class SitesFragment extends Fragment {
     private Context context;
 
     private User loggedInUser;
+    public ProgressDialog mProgressDialog;
+
+
+    private SitesAdapter mAdapter;
+    private ArrayList<Site> sitesArrayList;
 
 
     @BindView(R.id.shimmer_my_container)
@@ -73,47 +106,60 @@ public class SitesFragment extends Fragment {
         btn_create_site.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createSiteDialog();
+                siteDialog("Create a new site",null);
+            }
+        });
+
+        sitesArrayList = new ArrayList<>();
+        mAdapter = new SitesAdapter(context, sitesArrayList);
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context,LinearLayoutManager.VERTICAL, false);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                layoutManager.getOrientation());
+
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        //set data and list adapter
+        recyclerView.setAdapter(mAdapter);
+
+        mAdapter.setOnDeleteListener(new SitesAdapter.OnDeleteListener() {
+            @Override
+            public void onItemClick(int position) {
+                Site site = sitesArrayList.get(position);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Confirm site deletion?");
+                builder.setMessage("Are you sure you want to delete the site: "+site.getSite_name()+"?");
+                builder.setPositiveButton("Yes, delete!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        showProgressDialog();
+                        deleteSite(site.getId());
+                    }
+                });
+                builder.setNegativeButton("Cancel", null);
+
+                builder.show();
             }
         });
 
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setHasFixedSize(true);
+        mAdapter.setOnEditListener(new SitesAdapter.OnEditListener() {
+            @Override
+            public void onItemClick(int position) {
+                Site site = sitesArrayList.get(position);
+                siteDialog("Edit site", site);
+            }
+        });
 
-        //set data and list adapter
-        //recyclerView.setAdapter(mAdapter);
-
-
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//
-//                if (!recyclerView.canScrollHorizontally(1)) {
-//                    if (myShouldLoadMore && !MY_NEXT_LINK.equals("null")) {
-//                        loadMore();
-//                    }
-//                }
-//            }
-//        });
-
-//        mAdapter.setOnItemClickListener(new ResourcesAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(int position) {
-//                Resource resource = resourceArrayList.get(position);
-//
-//                Bundle bundle = new Bundle();
-//                bundle.putSerializable("resource", resource);
-//                NavHostFragment.findNavController(CMESTabFragment.this).navigate(R.id.nac_resource_details, bundle);
-//            }
-//        });
-
-
-
+        getSites();
 
         return root;
     }
+
+
 
     @Override
     public void onDestroyView() {
@@ -133,7 +179,7 @@ public class SitesFragment extends Fragment {
         super.onPause();
     }
 
-    private void createSiteDialog() {
+    private void siteDialog(String titleStr, Site site) {
         final Dialog dialog = new Dialog( context);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE); // before
         dialog.setContentView(R.layout.dialog_create_site);
@@ -144,17 +190,30 @@ public class SitesFragment extends Fragment {
         lp.width = WindowManager.LayoutParams.WRAP_CONTENT;
         lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
         EditText siteET = dialog.findViewById(R.id.et_site);
+        TextView title = dialog.findViewById(R.id.title);
+        Button btn = dialog.findViewById(R.id.btn_create_site);
+
+
+        title.setText(titleStr);
+
+        if (site!=null){
+            siteET.setText(site.getSite_name());
+            btn.setText("Update");
+        }
 
 
 
-        ((Button) dialog.findViewById(R.id.btn_create_site)).setOnClickListener(new View.OnClickListener() {
+        btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (TextUtils.isEmpty(siteET.getText().toString())) {
                     siteET.setError("Please enter the site name");
                 } else {
-//                    showProgressDialog();
-//                    createStudy(studyET.getText().toString());
+                    showProgressDialog();
+                    if (site == null)
+                        createSite(siteET.getText().toString());
+                    else
+                        editSite(siteET.getText().toString(),site.getId());
                     dialog.dismiss();
                 }
             }
@@ -165,109 +224,290 @@ public class SitesFragment extends Fragment {
         dialog.getWindow().setAttributes(lp);
     }
 
+    private void deleteSite(int siteId) {
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                Stash.getString(Constants.END_POINT)+ Constants.DELETE_SITE+siteId, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                hideProgressDialog();
+                try {
+                    boolean success = response.has("success") && response.getBoolean("success");
+                    String message = response.has("message") ? response.getString("message") : "";
+                    String errors = response.has("errors") ? response.getString("errors") : "";
+
+                    if (success) {
+                        Dialogs.showOkDialog(context,"Success",message);
+                        getSites();
+                    } else {
+                        Dialogs.showWarningDialog(context,message,errors);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e("JSON Exception: ", e.getMessage());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                hideProgressDialog();
+                VolleyLog.d("VOLLEY ERROE", "Error: " + error.getMessage());
+                MainActivity.getInstance().snack(VolleyErrors.getVolleyErrorMessages(error, context));
+
+            }
+        }){
+            /*
+             * Passing some request headers
+             */
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", loggedInUser.getToken_type()+" "+loggedInUser.getAccess_token());
+                headers.put("Content-Type", "application/json");
+                headers.put("Accept", "application/json");
+                return headers;
+            }
+        };
+
+        PrismsApplication.getInstance().addToRequestQueue(jsonObjReq);
+    }
+
+    private void createSite(String siteName) {
+
+        JSONObject payload = new JSONObject();
+        try {
+            payload.put("site_name", siteName);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
 
-//    private void firstLoad() {
-//
-//
-//        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-//                Stash.getString(Constants.END_POINT)+ Constants.WALLET_TRANSACTIONS, null, new Response.Listener<JSONObject>() {
-//
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                try {
-//
-////                    Log.e("resoponse", response.toString());
-//
-//                    walletTransactionArrayList.clear();
-//
-//                    myShouldLoadMore = true;
-//                    recyclerView.setVisibility(View.VISIBLE);
-//
-//                    if (shimmer_my_container!=null){
-//                        shimmer_my_container.stopShimmerAnimation();
-//                        shimmer_my_container.setVisibility(View.GONE);
-//                    }
-//
-//
-//                    boolean  status = response.has("success") && response.getBoolean("success");
-//                    String message = response.has("message") ? response.getString("message") : "" ;
-//                    String errors = response.has("errors") ? response.getString("errors") : "" ;
-//
-//
-//                    if (status){
-//                        JSONArray myArray = response.getJSONArray("data");
-//                        JSONObject links = response.getJSONObject("links");
-//                        MY_NEXT_LINK = links.getString("next");
-//
-//                        if (myArray.length() > 0){
-//
-//                            no_transactions.setVisibility(View.GONE);
-//
-//
-//                            for (int i = 0; i < myArray.length(); i++) {
-//
-//                                JSONObject item = (JSONObject) myArray.get(i);
-//
-//
-//                                int  id = item.has("id") ? item.getInt("id") : 0;
-//                                int  wallet_id = item.has("wallet_id") ? item.getInt("wallet_id") : 0;
-//                                String amount = item.has("amount") ? item.getString("amount") : "";
-//                                String transaction_type = item.has("transaction_type") ? item.getString("transaction_type") : "";
-//                                String source = item.has("source") ? item.getString("source") : "";
-//                                String trx_id = item.has("trx_id") ? item.getString("trx_id") : "";
-//                                String narration = item.has("narration") ? item.getString("narration") : "";
-//                                String created_at = item.has("created_at") ? item.getString("created_at") : "";
-//
-//                                WalletTransaction walletTransaction = new WalletTransaction(id,wallet_id,amount,transaction_type,source,trx_id,narration,created_at);
-//
-//                                walletTransactionArrayList.add(walletTransaction);
-//                                mAdapter.notifyDataSetChanged();
-//
-//                            }
-//
-//                        }else {
-//                            //not data found
-//                            no_transactions.setVisibility(View.VISIBLE);
-//                        }
-//                    }else {
-//                        Dialogs.showWarningDialog(context,message,errors);
-//
-//                    }
-//
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        }, new Response.ErrorListener() {
-//
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                myShouldLoadMore =true;
-//
-//                VolleyLog.d("VOLLEY ERROE", "Error: " + error.getMessage());
-//                MainActivity.getInstance().snack(VolleyErrors.getVolleyErrorMessages(error, context));
-//
-//            }
-//        }){
-//            /*
-//             * Passing some request headers
-//             */
-//            @Override
-//            public Map<String, String> getHeaders() throws AuthFailureError {
-//                HashMap<String, String> headers = new HashMap<String, String>();
-//                headers.put("Authorization", loggedInUser.getToken_type()+" "+loggedInUser.getAccess_token());
-//                headers.put("Content-Type", "application/json");
-//                headers.put("Accept", "application/json");
-//                return headers;
-//            }
-//        };
-//
-//        AfyacashApplication.getInstance().addToRequestQueue(jsonObjReq);
-//    }
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                Stash.getString(Constants.END_POINT)+ Constants.SITES, payload, new Response.Listener<JSONObject>() {
 
+            @Override
+            public void onResponse(JSONObject response) {
+                hideProgressDialog();
+                try {
+                    boolean success = response.has("success") && response.getBoolean("success");
+                    String message = response.has("message") ? response.getString("message") : "";
+                    String errors = response.has("errors") ? response.getString("errors") : "";
+
+                    if (success) {
+                        Dialogs.showOkDialog(context,"Success",message);
+                        getSites();
+                    } else {
+                        Dialogs.showWarningDialog(context,message,errors);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e("JSON Exception: ", e.getMessage());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                hideProgressDialog();
+                VolleyLog.d("VOLLEY ERROE", "Error: " + error.getMessage());
+                MainActivity.getInstance().snack(VolleyErrors.getVolleyErrorMessages(error, context));
+
+            }
+        }){
+            /*
+             * Passing some request headers
+             */
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", loggedInUser.getToken_type()+" "+loggedInUser.getAccess_token());
+                headers.put("Content-Type", "application/json");
+                headers.put("Accept", "application/json");
+                return headers;
+            }
+        };
+
+        PrismsApplication.getInstance().addToRequestQueue(jsonObjReq);
+    }
+
+    private void editSite(String siteName, int siteId) {
+        JSONObject payload = new JSONObject();
+        try {
+            payload.put("site_name", siteName);
+            payload.put("id", siteId);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                Stash.getString(Constants.END_POINT)+ Constants.UPDATE_SITE, payload, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                hideProgressDialog();
+                try {
+                    boolean success = response.has("success") && response.getBoolean("success");
+                    String message = response.has("message") ? response.getString("message") : "";
+                    String errors = response.has("errors") ? response.getString("errors") : "";
+
+                    if (success) {
+                        Dialogs.showOkDialog(context,"Success",message);
+                        getSites();
+                    } else {
+                        Dialogs.showWarningDialog(context,message,errors);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e("JSON Exception: ", e.getMessage());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                hideProgressDialog();
+                VolleyLog.d("VOLLEY ERROE", "Error: " + error.getMessage());
+                MainActivity.getInstance().snack(VolleyErrors.getVolleyErrorMessages(error, context));
+
+            }
+        }){
+            /*
+             * Passing some request headers
+             */
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", loggedInUser.getToken_type()+" "+loggedInUser.getAccess_token());
+                headers.put("Content-Type", "application/json");
+                headers.put("Accept", "application/json");
+                return headers;
+            }
+        };
+
+        PrismsApplication.getInstance().addToRequestQueue(jsonObjReq);
+    }
+
+    private void getSites() {
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                Stash.getString(Constants.END_POINT)+ Constants.SITES, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+
+//                    Log.e("resoponse", response.toString());
+
+                    sitesArrayList.clear();
+
+                    if (recyclerView!=null)
+                        recyclerView.setVisibility(View.VISIBLE);
+
+                    if (shimmer_my_container!=null){
+                        shimmer_my_container.stopShimmerAnimation();
+                        shimmer_my_container.setVisibility(View.GONE);
+                    }
+
+
+                    boolean  status = response.has("success") && response.getBoolean("success");
+                    String  message = response.has("message") ? response.getString("message") : "" ;
+                    String  errors = response.has("errors") ? response.getString("errors") : "" ;
+
+
+                    if (status){
+                        JSONArray myArray = response.getJSONArray("data");
+
+                        if (myArray.length() > 0){
+
+                            if (no_sites!=null)
+                                no_sites.setVisibility(View.GONE);
+
+
+
+                            for (int i = 0; i < myArray.length(); i++) {
+
+                                JSONObject item = (JSONObject) myArray.get(i);
+
+
+                                int  id = item.has("id") ? item.getInt("id") : 0;
+                                String site_name = item.has("site_name") ? item.getString("site_name") : "";
+
+                                Site site = new Site(site_name,id);
+
+                                sitesArrayList.add(site);
+                                mAdapter.notifyDataSetChanged();
+
+                            }
+
+                        }else {
+                            //not data found
+                            if (no_sites!=null)
+                                no_sites.setVisibility(View.VISIBLE);
+
+                        }
+                    }else {
+                        Dialogs.showWarningDialog(context,message,errors);
+
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                VolleyLog.d("VOLLEY ERROE", "Error: " + error.getMessage());
+                MainActivity.getInstance().snack(VolleyErrors.getVolleyErrorMessages(error, context));
+
+            }
+        }){
+            /*
+             * Passing some request headers
+             */
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", loggedInUser.getToken_type()+" "+loggedInUser.getAccess_token());
+                headers.put("Content-Type", "application/json");
+                headers.put("Accept", "application/json");
+                return headers;
+            }
+        };
+
+        PrismsApplication.getInstance().addToRequestQueue(jsonObjReq);
+    }
+
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(context);
+            mProgressDialog.setMessage(getString(R.string.processing));
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setCancelable(false);
+        }
+
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
 
 
 }
