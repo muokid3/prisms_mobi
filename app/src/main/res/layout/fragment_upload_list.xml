@@ -207,11 +207,11 @@
 
             </LinearLayout>
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/select_file"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                style="@style/Button.Accent.Borderless"
+                style="@style/MaterialButton.OutlinedButton.IconOnly"
                 android:text="@string/select_file_to_upload"
                 android:textColor="@color/colorPrimary"
                 android:textStyle="bold"

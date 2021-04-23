@@ -25,6 +25,12 @@ public class Constants {
     public static String UPDATE_STUDY = "studies/update";
     public static String DELETE_STUDY = "studies/delete/";
 
+    public static String STRATA = "strata";
+    public static String STRATUM = "stratum";
+    public static String UPDATE_STRATUM = "stratum/update";
+    public static String DELETE_STRATUM = "stratum/delete/";
+
+
 
 
 
