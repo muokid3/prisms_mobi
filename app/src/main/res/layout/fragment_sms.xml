@@ -1,138 +1,151 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:shimmer="http://schemas.android.com/tools"
-    android:orientation="vertical">
+    android:id="@+id/bgLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nested_content"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
-        android:scrollbars="none"
-        android:scrollingCache="true">
+        xmlns:shimmer="http://schemas.android.com/tools"
+        android:orientation="vertical">
 
-
-        <LinearLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nested_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/spacing_large"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:scrollbars="none"
+            android:scrollingCache="true">
 
-            <androidx.cardview.widget.CardView
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="2dp"
-                app:cardElevation="2dp">
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/spacing_large"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/header"
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="2dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:id="@+id/header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/activity_horizontal_margin">
+
+
+                        <ImageView
+                            android:layout_width="120dp"
+                            android:layout_height="75dp"
+                            android:scaleType="fitCenter"
+                            app:srcCompat="@drawable/ic_message" />
+
+
+                        <TextView
+                            android:id="@+id/home_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_medium"
+                            android:text="@string/sms"
+                            android:textAllCaps="true"
+                            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                            android:textColor="@color/blue_grey_900"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/home_desc"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_medium"
+                            android:text="@string/you_can_monitor_messaging_and_sms_randomization_from_this_page"
+                            android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
+                            android:textColor="@color/grey_60" />
+
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/spacing_large" />
+
+
+                <com.facebook.shimmer.ShimmerFrameLayout
+                    android:id="@+id/shimmer_my_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="@dimen/activity_horizontal_margin">
+                    shimmer:duration="800">
 
-
-                    <ImageView
-                        android:layout_width="120dp"
-                        android:layout_height="75dp"
-                        android:scaleType="fitCenter"
-                        app:srcCompat="@drawable/ic_message" />
-
-
-                    <TextView
-                        android:id="@+id/home_title"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:id="@+id/shimmerInnerLayout"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_medium"
-                        android:text="@string/sms"
-                        android:textAllCaps="true"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                        android:textColor="@color/blue_grey_900"
-                        android:textStyle="bold" />
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/home_desc"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/spacing_medium"
-                        android:text="@string/you_can_monitor_messaging_and_sms_randomization_from_this_page"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Subhead"
-                        android:textColor="@color/grey_60" />
+                        <include layout="@layout/small_placeholder_item" />
+                    </LinearLayout>
 
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/spacing_large" />
-
-
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/shimmer_my_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                shimmer:duration="800">
+                </com.facebook.shimmer.ShimmerFrameLayout>
 
                 <LinearLayout
-                    android:id="@+id/shimmerInnerLayout"
+                    android:id="@+id/no_sms"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="10dp"
+                    android:visibility="gone">
 
-                    <include layout="@layout/small_placeholder_item" />
+                    <ImageView
+                        android:layout_width="170dp"
+                        android:layout_height="170dp"
+                        android:src="@drawable/img_no_feed" />
+
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_large"
+                        android:text="@string/you_do_not_have_any_incoming_sms_messages"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
+                        android:textColor="@color/grey_60" />
+
                 </LinearLayout>
 
-            </com.facebook.shimmer.ShimmerFrameLayout>
-
-            <LinearLayout
-                android:id="@+id/no_sms"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="10dp"
-                android:visibility="gone">
-
-                <ImageView
-                    android:layout_width="170dp"
-                    android:layout_height="170dp"
-                    android:src="@drawable/img_no_feed" />
-
-                <TextView
-                    android:id="@+id/title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_large"
-                    android:text="@string/you_do_not_have_any_incoming_sms_messages"
-                    android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
-                    android:textColor="@color/grey_60" />
 
             </LinearLayout>
 
 
-        </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:layout_margin="@dimen/spacing_large"
+            android:scrollingCache="true"
+            android:visibility="visible" />
 
-    </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <FrameLayout
+        android:id="@+id/bottom_sheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:layout_margin="@dimen/spacing_large"
-        android:scrollingCache="true"
-        android:visibility="visible" />
+        app:layout_behavior="@string/bottom_sheet_behavior" />
 
 
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
+

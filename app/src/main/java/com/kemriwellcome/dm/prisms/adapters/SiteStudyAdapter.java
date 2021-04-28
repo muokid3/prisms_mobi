@@ -10,45 +10,43 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kemriwellcome.dm.prisms.R;
-import com.kemriwellcome.dm.prisms.models.Site;
-import com.kemriwellcome.dm.prisms.models.Sms;
+import com.kemriwellcome.dm.prisms.models.SiteStudy;
+import com.kemriwellcome.dm.prisms.models.Study;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class SmsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class SiteStudyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Sms> items = new ArrayList<>();
+    private List<SiteStudy> items = new ArrayList<>();
 
     private Context context;
-    private OnViewListener onViewListener;
+    private OnClickListener onClickListener;
+    
 
-    public interface OnViewListener {
+    public interface OnClickListener {
         void onItemClick(int position);
     }
-    public void setOnViewListener(OnViewListener onViewListener) {
-        this.onViewListener = onViewListener;
+    public void setOnClickListener(OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
     }
 
-
-    public SmsAdapter(Context context, List<Sms> items) {
+    public SiteStudyAdapter(Context context, List<SiteStudy> items) {
         this.items = items;
         this.context = context;
     }
 
     public class OriginalViewHolder extends RecyclerView.ViewHolder {
-        public TextView time_in;
-        public TextView message;
-        public TextView sender;
+        public TextView study_name;
+        public TextView study_detail;
         public Button viewBtn;
 
         public OriginalViewHolder(View v) {
             super(v);
 
-            time_in = (TextView) v.findViewById(R.id.time_in);
-            message = (TextView) v.findViewById(R.id.message);
-            sender = (TextView) v.findViewById(R.id.sender);
+            study_name = (TextView) v.findViewById(R.id.study_name);
+            study_detail = (TextView) v.findViewById(R.id.study_detail);
             viewBtn = (Button) v.findViewById(R.id.viewBtn);
         }
     }
@@ -56,7 +54,7 @@ public class SmsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder vh;
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_sms, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_site_study, parent, false);
         vh = new OriginalViewHolder(v);
         return vh;
     }
@@ -64,24 +62,23 @@ public class SmsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        Sms obj = items.get(position);
+        SiteStudy obj = items.get(position);
         if (holder instanceof OriginalViewHolder) {
 
             OriginalViewHolder view = (OriginalViewHolder) holder;
-            view.time_in.setText(obj.getTimestamp());
-            view.message.setText(obj.getText());
-            view.sender.setText(obj.getSource());
+            view.study_name.setText(obj.getStudy_name());
+            view.study_detail.setText(obj.getStudy_detail());
+
 
 
             view.viewBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                    if (onViewListener != null) {
-                        onViewListener.onItemClick(position);
+                public void onClick(View v) {
+                    if (onClickListener != null) {
+                        onClickListener.onItemClick(position);
                     }
                 }
             });
-
         }
     }
 

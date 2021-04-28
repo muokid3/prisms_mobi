@@ -1,11 +1,16 @@
 package com.kemriwellcome.dm.prisms.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -20,6 +25,8 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.fxn.stash.Stash;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kemriwellcome.dm.prisms.MainActivity;
 import com.kemriwellcome.dm.prisms.R;
 import com.kemriwellcome.dm.prisms.adapters.SmsAdapter;
@@ -67,6 +74,10 @@ public class SmsFragment extends Fragment {
 
     private SmsAdapter mAdapter;
     private ArrayList<Sms> smsArrayList;
+
+    private BottomSheetBehavior mBehavior;
+    private BottomSheetDialog mBottomSheetDialog;
+    private View bottom_sheet;
 
 
 
@@ -119,11 +130,14 @@ public class SmsFragment extends Fragment {
 
                 Sms clickedSms = smsArrayList.get(position);
 
-                //show bottom dialog with details here
+                showDetailsBottomSheetDialog(clickedSms);
 
             }
         });
 
+
+        bottom_sheet = root.findViewById(R.id.bottom_sheet);
+        mBehavior = BottomSheetBehavior.from(bottom_sheet);
 
 
 
@@ -377,6 +391,46 @@ public class SmsFragment extends Fragment {
 
         PrismsApplication.getInstance().addToRequestQueue(jsonObjReq);
     }
+
+    private void showDetailsBottomSheetDialog(final Sms sms) {
+        if (mBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+            mBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        }
+
+        final View view = getLayoutInflater().inflate(R.layout.dialog_sms_details, null);
+        ((TextView) view.findViewById(R.id.phone_no)).setText(sms.getSource());
+        ((TextView) view.findViewById(R.id.timestamp)).setText(sms.getTimestamp());
+        ((TextView) view.findViewById(R.id.latency)).setText("Latency: "+sms.getLatency());
+        ((TextView) view.findViewById(R.id.message)).setText(sms.getText());
+        ((TextView) view.findViewById(R.id.response)).setText(sms.getOutbox()==null?"No response":sms.getOutbox().getText());
+        (view.findViewById(R.id.bt_close)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mBottomSheetDialog.hide();
+            }
+        });
+
+
+
+        mBottomSheetDialog = new BottomSheetDialog(context);
+        mBottomSheetDialog.setContentView(view);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mBottomSheetDialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+
+        // set background transparent
+        ((View) view.getParent()).setBackgroundColor(getResources().getColor(android.R.color.transparent));
+
+        mBottomSheetDialog.show();
+        mBottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mBottomSheetDialog = null;
+            }
+        });
+
+    }
+
 
 
 

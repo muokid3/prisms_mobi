@@ -12,11 +12,34 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.fxn.stash.Stash;
+import com.kemriwellcome.dm.prisms.MainActivity;
 import com.kemriwellcome.dm.prisms.R;
+import com.kemriwellcome.dm.prisms.adapters.SiteStudyAdapter;
+import com.kemriwellcome.dm.prisms.adapters.SmsAdapter;
 import com.kemriwellcome.dm.prisms.dependencies.Constants;
+import com.kemriwellcome.dm.prisms.dependencies.Dialogs;
+import com.kemriwellcome.dm.prisms.dependencies.PrismsApplication;
+import com.kemriwellcome.dm.prisms.dependencies.VolleyErrors;
+import com.kemriwellcome.dm.prisms.models.Site;
+import com.kemriwellcome.dm.prisms.models.SiteStudy;
+import com.kemriwellcome.dm.prisms.models.Sms;
 import com.kemriwellcome.dm.prisms.models.User;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +54,10 @@ public class MyStudiesFragment extends Fragment {
     private Context context;
 
     private User loggedInUser;
+
+
+    private SiteStudyAdapter mAdapter;
+    private ArrayList<SiteStudy> siteStudyArrayList;
 
 
     @BindView(R.id.shimmer_my_container)
@@ -61,37 +88,26 @@ public class MyStudiesFragment extends Fragment {
 
         loggedInUser = (User) Stash.getObject(Constants.USER, User.class);
 
+        siteStudyArrayList = new ArrayList<>();
+        mAdapter = new SiteStudyAdapter(context, siteStudyArrayList);
+
 
         recyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         recyclerView.setHasFixedSize(true);
 
         //set data and list adapter
-        //recyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter);
+
+        getSiteStudies();
 
 
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                super.onScrollStateChanged(recyclerView, newState);
-//
-//                if (!recyclerView.canScrollHorizontally(1)) {
-//                    if (myShouldLoadMore && !MY_NEXT_LINK.equals("null")) {
-//                        loadMore();
-//                    }
-//                }
-//            }
-//        });
 
-//        mAdapter.setOnItemClickListener(new ResourcesAdapter.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(int position) {
-//                Resource resource = resourceArrayList.get(position);
-//
-//                Bundle bundle = new Bundle();
-//                bundle.putSerializable("resource", resource);
-//                NavHostFragment.findNavController(CMESTabFragment.this).navigate(R.id.nac_resource_details, bundle);
-//            }
-//        });
+        mAdapter.setOnClickListener(new SiteStudyAdapter.OnClickListener() {
+            @Override
+            public void onItemClick(int position) {
+                SiteStudy siteStudy = siteStudyArrayList.get(position);
+            }
+        });
 
 
 
@@ -118,106 +134,107 @@ public class MyStudiesFragment extends Fragment {
     }
 
 
-//    private void firstLoad() {
-//
-//
-//        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
-//                Stash.getString(Constants.END_POINT)+ Constants.WALLET_TRANSACTIONS, null, new Response.Listener<JSONObject>() {
-//
-//            @Override
-//            public void onResponse(JSONObject response) {
-//                try {
-//
-////                    Log.e("resoponse", response.toString());
-//
-//                    walletTransactionArrayList.clear();
-//
-//                    myShouldLoadMore = true;
-//                    recyclerView.setVisibility(View.VISIBLE);
-//
-//                    if (shimmer_my_container!=null){
-//                        shimmer_my_container.stopShimmerAnimation();
-//                        shimmer_my_container.setVisibility(View.GONE);
-//                    }
-//
-//
-//                    boolean  status = response.has("success") && response.getBoolean("success");
-//                    String message = response.has("message") ? response.getString("message") : "" ;
-//                    String errors = response.has("errors") ? response.getString("errors") : "" ;
-//
-//
-//                    if (status){
-//                        JSONArray myArray = response.getJSONArray("data");
-//                        JSONObject links = response.getJSONObject("links");
-//                        MY_NEXT_LINK = links.getString("next");
-//
-//                        if (myArray.length() > 0){
-//
-//                            no_transactions.setVisibility(View.GONE);
-//
-//
-//                            for (int i = 0; i < myArray.length(); i++) {
-//
-//                                JSONObject item = (JSONObject) myArray.get(i);
-//
-//
-//                                int  id = item.has("id") ? item.getInt("id") : 0;
-//                                int  wallet_id = item.has("wallet_id") ? item.getInt("wallet_id") : 0;
-//                                String amount = item.has("amount") ? item.getString("amount") : "";
-//                                String transaction_type = item.has("transaction_type") ? item.getString("transaction_type") : "";
-//                                String source = item.has("source") ? item.getString("source") : "";
-//                                String trx_id = item.has("trx_id") ? item.getString("trx_id") : "";
-//                                String narration = item.has("narration") ? item.getString("narration") : "";
-//                                String created_at = item.has("created_at") ? item.getString("created_at") : "";
-//
-//                                WalletTransaction walletTransaction = new WalletTransaction(id,wallet_id,amount,transaction_type,source,trx_id,narration,created_at);
-//
-//                                walletTransactionArrayList.add(walletTransaction);
-//                                mAdapter.notifyDataSetChanged();
-//
-//                            }
-//
-//                        }else {
-//                            //not data found
-//                            no_transactions.setVisibility(View.VISIBLE);
-//                        }
-//                    }else {
-//                        Dialogs.showWarningDialog(context,message,errors);
-//
-//                    }
-//
-//
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//
-//            }
-//        }, new Response.ErrorListener() {
-//
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                myShouldLoadMore =true;
-//
-//                VolleyLog.d("VOLLEY ERROE", "Error: " + error.getMessage());
-//                MainActivity.getInstance().snack(VolleyErrors.getVolleyErrorMessages(error, context));
-//
-//            }
-//        }){
-//            /*
-//             * Passing some request headers
-//             */
-//            @Override
-//            public Map<String, String> getHeaders() throws AuthFailureError {
-//                HashMap<String, String> headers = new HashMap<String, String>();
-//                headers.put("Authorization", loggedInUser.getToken_type()+" "+loggedInUser.getAccess_token());
-//                headers.put("Content-Type", "application/json");
-//                headers.put("Accept", "application/json");
-//                return headers;
-//            }
-//        };
-//
-//        AfyacashApplication.getInstance().addToRequestQueue(jsonObjReq);
-//    }
+    private void getSiteStudies() {
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                Stash.getString(Constants.END_POINT)+ Constants.MY_STUDIES, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+
+//                    Log.e("resoponse", response.toString());
+
+                    siteStudyArrayList.clear();
+
+                    if (recyclerView!=null)
+                        recyclerView.setVisibility(View.VISIBLE);
+
+                    if (shimmer_my_container!=null){
+                        shimmer_my_container.stopShimmerAnimation();
+                        shimmer_my_container.setVisibility(View.GONE);
+                    }
+
+
+                    boolean  status = response.has("success") && response.getBoolean("success");
+                    String  message = response.has("message") ? response.getString("message") : "" ;
+                    String  errors = response.has("errors") ? response.getString("errors") : "" ;
+
+
+                    if (status){
+                        JSONArray myArray = response.getJSONArray("data");
+
+                        if (myArray.length() > 0){
+
+                            if (no_studies!=null)
+                                no_studies.setVisibility(View.GONE);
+
+
+
+                            for (int i = 0; i < myArray.length(); i++) {
+
+                                JSONObject item = (JSONObject) myArray.get(i);
+
+
+                                int  id = item.has("id") ? item.getInt("id") : 0;
+                                int  site_id = item.has("site_id") ? item.getInt("site_id") : 0;
+                                int  study_id = item.has("study_id") ? item.getInt("study_id") : 0;
+                                int  study_coordinator = item.has("study_coordinator") ? item.getInt("study_coordinator") : 0;
+                                String date_initiated = item.has("date_initiated") ? item.getString("date_initiated") : "";
+                                String studyStatus = item.has("status") ? item.getString("status") : "";
+                                String study_name = item.has("study_name") ? item.getString("study_name") : "";
+                                String study_detail = item.has("study_detail") ? item.getString("study_detail") : "";
+                                String site_name = item.has("site_name") ? item.getString("site_name") : "";
+
+                                SiteStudy site = new SiteStudy(id,site_id,study_id,study_coordinator,date_initiated,studyStatus,study_name,study_detail,site_name);
+
+                                siteStudyArrayList.add(site);
+                                mAdapter.notifyDataSetChanged();
+
+                            }
+
+                        }else {
+                            //not data found
+                            if (no_studies!=null)
+                                no_studies.setVisibility(View.VISIBLE);
+
+                        }
+                    }else {
+                        Dialogs.showWarningDialog(context,message,errors);
+
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                VolleyLog.d("VOLLEY ERROE", "Error: " + error.getMessage());
+                MainActivity.getInstance().snack(VolleyErrors.getVolleyErrorMessages(error, context));
+
+            }
+        }){
+            /*
+             * Passing some request headers
+             */
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", loggedInUser.getToken_type()+" "+loggedInUser.getAccess_token());
+                headers.put("Content-Type", "application/json");
+                headers.put("Accept", "application/json");
+                return headers;
+            }
+        };
+
+        PrismsApplication.getInstance().addToRequestQueue(jsonObjReq);
+    }
 
 
 
