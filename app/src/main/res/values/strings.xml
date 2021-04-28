@@ -94,6 +94,9 @@
     <string name="stratum">Stratum</string>
     <string name="study_detail">Study detail</string>
     <string name="you_do_not_have_any_incoming_sms_messages">You do not have any incoming SMS messages</string>
+    <string name="randomise">Randomise</string>
+    <string name="randomise_an_allocation">Randomise an allocation</string>
+    <string name="ip_number">IP Number</string>
 
 
 </resources>

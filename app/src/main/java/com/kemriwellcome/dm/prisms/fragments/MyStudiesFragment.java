@@ -28,6 +28,7 @@ import com.kemriwellcome.dm.prisms.dependencies.Constants;
 import com.kemriwellcome.dm.prisms.dependencies.Dialogs;
 import com.kemriwellcome.dm.prisms.dependencies.PrismsApplication;
 import com.kemriwellcome.dm.prisms.dependencies.VolleyErrors;
+import com.kemriwellcome.dm.prisms.dialogs.StudyDetails;
 import com.kemriwellcome.dm.prisms.models.Site;
 import com.kemriwellcome.dm.prisms.models.SiteStudy;
 import com.kemriwellcome.dm.prisms.models.Sms;
@@ -106,6 +107,10 @@ public class MyStudiesFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
                 SiteStudy siteStudy = siteStudyArrayList.get(position);
+
+                StudyDetails bottomSheetFragment = StudyDetails.newInstance(siteStudy,context);
+                bottomSheetFragment.show(getChildFragmentManager(), bottomSheetFragment.getTag());
+
             }
         });
 
