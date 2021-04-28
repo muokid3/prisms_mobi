@@ -95,7 +95,7 @@
             </com.facebook.shimmer.ShimmerFrameLayout>
 
             <LinearLayout
-                android:id="@+id/no_studies"
+                android:id="@+id/no_sms"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
@@ -113,7 +113,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_large"
-                    android:text="@string/you_do_not_have_any_studies_assigned_to_you_yet"
+                    android:text="@string/you_do_not_have_any_incoming_sms_messages"
                     android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
                     android:textColor="@color/grey_60" />
 

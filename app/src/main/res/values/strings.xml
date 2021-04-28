@@ -93,6 +93,7 @@
     <string name="create_new_stratum">Create new stratum</string>
     <string name="stratum">Stratum</string>
     <string name="study_detail">Study detail</string>
+    <string name="you_do_not_have_any_incoming_sms_messages">You do not have any incoming SMS messages</string>
 
 
 </resources>

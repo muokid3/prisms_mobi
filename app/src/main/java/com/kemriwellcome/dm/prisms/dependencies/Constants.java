@@ -30,6 +30,9 @@ public class Constants {
     public static String UPDATE_STRATUM = "stratum/update";
     public static String DELETE_STRATUM = "stratum/delete/";
 
+    public static String SMS = "sms";
+
+
 
 
 
