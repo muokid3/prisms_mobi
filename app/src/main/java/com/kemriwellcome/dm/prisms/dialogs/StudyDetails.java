@@ -1,8 +1,12 @@
 package com.kemriwellcome.dm.prisms.dialogs;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.telephony.SmsManager;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +17,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
@@ -48,6 +55,11 @@ public class StudyDetails extends BottomSheetDialogFragment {
     private SiteStudy siteStudy;
     private Context context;
     private Unbinder unbinder;
+
+    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS =0 ;
+
+    private String message = "";
+
 
 
     @BindView(R.id.study_name)
@@ -164,9 +176,43 @@ public class StudyDetails extends BottomSheetDialogFragment {
     }
 
     private void randomise(SiteStudy siteStudy, String ipNo) {
-        String message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_name()+" "+loggedInUser.getPhone_no();
+        message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_name()+" "+loggedInUser.getPhone_no();
 
-        Dialogs.showOkDialog(context,"Request has been sent", "The randomisation request below has been sent via SMS\n\n"+message);
+        if (ContextCompat.checkSelfPermission(context, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.SEND_SMS)) {
+            } else {
+                ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.SEND_SMS}, MY_PERMISSIONS_REQUEST_SEND_SMS);
+            }
+        }else {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(Constants.SHORTCODE, null, message, null, null);
+
+            Dialogs.showOkDialog(context,"Request has been sent", "The randomisation request below has been sent via SMS\n\n"+message);
+
+        }
+
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_SEND_SMS: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    SmsManager smsManager = SmsManager.getDefault();
+                    smsManager.sendTextMessage(Constants.SHORTCODE, null, message, null, null);
+
+                    Dialogs.showOkDialog(context,"Request has been sent", "The randomisation request below has been sent via SMS\n\n"+message);
+
+                } else {
+                    Toast.makeText(context,
+                            "SMS failed, please try again.", Toast.LENGTH_LONG).show();
+                    return;
+                }
+            }
+        }
+
     }
 
 }

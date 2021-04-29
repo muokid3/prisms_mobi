@@ -32,6 +32,7 @@ public class Constants {
 
     public static String SMS = "sms";
     public static String MY_STUDIES = "my_studies";
+    public static String SHORTCODE = "23515";
 
 
 
