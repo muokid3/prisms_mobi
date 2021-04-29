@@ -31,6 +31,7 @@ public class Constants {
     public static String DELETE_STRATUM = "stratum/delete/";
 
     public static String SMS = "sms";
+    public static String SMS_GRAPH = "sms/graph";
     public static String MY_STUDIES = "my_studies";
     public static String SHORTCODE = "23515";
 

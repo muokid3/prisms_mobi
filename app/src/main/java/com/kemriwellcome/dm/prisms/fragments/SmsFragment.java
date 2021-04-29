@@ -2,6 +2,7 @@ package com.kemriwellcome.dm.prisms.fragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -25,6 +26,20 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.fxn.stash.Stash;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.kemriwellcome.dm.prisms.MainActivity;
@@ -43,6 +58,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -69,6 +85,9 @@ public class SmsFragment extends Fragment {
     @BindView(R.id.no_sms)
     LinearLayout no_sms;
 
+    @BindView(R.id.chart1)
+    LineChart chart;
+
     private boolean myShouldLoadMore = true;
     private String MY_NEXT_LINK = null;
 
@@ -78,6 +97,7 @@ public class SmsFragment extends Fragment {
     private BottomSheetBehavior mBehavior;
     private BottomSheetDialog mBottomSheetDialog;
     private View bottom_sheet;
+
 
 
 
@@ -140,8 +160,152 @@ public class SmsFragment extends Fragment {
         mBehavior = BottomSheetBehavior.from(bottom_sheet);
 
 
+        chart.setDrawGridBackground(false);
+        chart.getDescription().setEnabled(false);
+        chart.setDrawBorders(false);
+
+        chart.getAxisLeft().setEnabled(true);
+        chart.getAxisRight().setDrawAxisLine(false);
+        chart.getAxisRight().setDrawGridLines(false);
+        chart.getXAxis().setDrawAxisLine(true);
+        chart.getXAxis().setDrawGridLines(false);
+
+        // enable touch gestures
+        chart.setTouchEnabled(true);
+
+        // enable scaling and dragging
+        chart.setDragEnabled(true);
+        chart.setScaleEnabled(true);
+
+        // if disabled, scaling can be done on x- and y-axis separately
+        chart.setPinchZoom(false);
+
+
+        Legend l = chart.getLegend();
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setDrawInside(false);
+
+        getChartData();
+
+        //loadChartData();
+
+
+
 
         return root;
+    }
+
+    private void getChartData() {
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                Stash.getString(Constants.END_POINT)+ Constants.SMS_GRAPH, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+
+//                    Log.e("resoponse", response.toString());
+
+
+                    boolean  status = response.has("success") && response.getBoolean("success");
+                    String message = response.has("message") ? response.getString("message") : "" ;
+                    String errors = response.has("errors") ? response.getString("errors") : "" ;
+
+
+                    if (status){
+                        JSONArray myArray = response.getJSONArray("data");
+
+                        if (myArray.length() > 0){
+
+
+                            // the labels that should be drawn on the XAxis
+                            String[] datesArray = new String[myArray.length()];
+
+                            List<Entry> inbox = new ArrayList<Entry>();
+                            List<Entry> outbox = new ArrayList<Entry>();
+
+                            for (int i = 0; i < myArray.length(); i++) {
+
+                                JSONObject item = (JSONObject) myArray.get(i);
+
+
+                                int  inboxNo = item.has("inbox") ? item.getInt("inbox") : 0;
+                                int  outboxNo = item.has("outbox") ? item.getInt("outbox") : 0;
+                                String date = item.has("date") ? item.getString("date") : "";
+
+                                datesArray[i] = date;
+
+                                inbox.add(new Entry(i, inboxNo));
+                                outbox.add(new Entry(i, outboxNo));
+                            }
+
+                            LineDataSet inboxDataset = new LineDataSet(inbox, "Inbox");
+                            inboxDataset.setAxisDependency(YAxis.AxisDependency.LEFT);
+                            inboxDataset.setColor(Color.RED);
+
+                            LineDataSet outboxDataset = new LineDataSet(outbox, "Outbox");
+                            outboxDataset.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+                            // use the interface ILineDataSet
+                            List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+                            dataSets.add(inboxDataset);
+                            dataSets.add(outboxDataset);
+
+                            ValueFormatter formatter = new ValueFormatter() {
+
+                                @Override
+                                public String getFormattedValue(float value) {
+                                    return datesArray[(int) value];
+                                }
+                            };
+
+                            XAxis xAxis = chart.getXAxis();
+                            xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
+                            xAxis.setValueFormatter(formatter);
+
+                            LineData data = new LineData(dataSets);
+                            chart.setData(data);
+                            chart.invalidate(); // refresh
+
+
+                        }
+                    }else {
+                        Dialogs.showWarningDialog(context,message,errors);
+
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                myShouldLoadMore =true;
+
+                VolleyLog.d("VOLLEY ERROE", "Error: " + error.getMessage());
+                MainActivity.getInstance().snack(VolleyErrors.getVolleyErrorMessages(error, context));
+
+            }
+        }){
+            /*
+             * Passing some request headers
+             */
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", loggedInUser.getToken_type()+" "+loggedInUser.getAccess_token());
+                headers.put("Content-Type", "application/json");
+                headers.put("Accept", "application/json");
+                return headers;
+            }
+        };
+
+        PrismsApplication.getInstance().addToRequestQueue(jsonObjReq);
     }
 
     @Override
@@ -434,5 +598,54 @@ public class SmsFragment extends Fragment {
 
 
 
+    public void loadChartData() {
 
+        // the labels that should be drawn on the XAxis
+        final String[] quarters = new String[] { "Q1", "Q2", "Q3", "Q4" };
+
+        List<Entry> valsComp1 = new ArrayList<Entry>();
+        List<Entry> valsComp2 = new ArrayList<Entry>();
+
+        valsComp1.add(new Entry(0, 2)); // 0 == quarter 1
+        valsComp1.add(new Entry(1, 5)); // 1 == quarter 2 ...
+        valsComp1.add(new Entry(2, 3)); // 2 == quarter 3 ...
+        valsComp1.add(new Entry(3, 7)); // 3 == quarter 4 ...
+
+        valsComp2.add(new Entry(0, 5)); // 0 == quarter 1
+        valsComp2.add(new Entry(1, 8)); // 1 == quarter 2 ...
+        valsComp2.add(new Entry(2, 6)); // 2 == quarter 3 ...
+        valsComp2.add(new Entry(3, 10)); // 3 == quarter 4 ...
+
+
+        LineDataSet setComp1 = new LineDataSet(valsComp1, "Inbox");
+        setComp1.setAxisDependency(YAxis.AxisDependency.LEFT);
+        LineDataSet setComp2 = new LineDataSet(valsComp2, "Outbox");
+        setComp2.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+        // use the interface ILineDataSet
+        List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+        dataSets.add(setComp1);
+        dataSets.add(setComp2);
+
+
+        ValueFormatter formatter = new ValueFormatter() {
+
+            @Override
+            public String getFormattedValue(float value) {
+                return quarters[(int) value];
+            }
+        };
+
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
+        xAxis.setValueFormatter(formatter);
+
+        LineData data = new LineData(dataSets);
+        chart.setData(data);
+        chart.invalidate(); // refresh
+
+
+
+
+    }
 }
