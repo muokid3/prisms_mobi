@@ -25,6 +25,7 @@ public class Constants {
     public static String UPDATE_STUDY = "studies/update";
     public static String DELETE_STUDY = "studies/delete/";
     public static String STUDY_ALLOCATION_GRAPH = "studies/study_allocation/";
+    public static String STUDY_RANDOMIZATION_RATE = "studies/randomization_rate";
 
     public static String STRATA = "strata";
     public static String STRATUM = "stratum";

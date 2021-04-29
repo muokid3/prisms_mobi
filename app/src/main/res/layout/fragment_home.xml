@@ -126,7 +126,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/spacing_large" />
 
-<!--                    stuff here-->
+
+                    <com.github.mikephil.charting.charts.LineChart
+                        android:id="@+id/chart"
+                        android:layout_width="match_parent"
+                        android:layout_height="200dp"/>
 
 
 
