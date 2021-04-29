@@ -2,6 +2,7 @@ package com.kemriwellcome.dm.prisms.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -148,7 +149,7 @@ public class MyStudiesFragment extends Fragment {
             public void onResponse(JSONObject response) {
                 try {
 
-//                    Log.e("resoponse", response.toString());
+                    //Log.e("resoponse", response.toString());
 
                     siteStudyArrayList.clear();
 

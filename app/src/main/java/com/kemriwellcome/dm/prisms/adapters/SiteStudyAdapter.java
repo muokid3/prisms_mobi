@@ -66,7 +66,7 @@ public class SiteStudyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         if (holder instanceof OriginalViewHolder) {
 
             OriginalViewHolder view = (OriginalViewHolder) holder;
-            view.study_name.setText(obj.getStudy_name());
+            view.study_name.setText(obj.getStudy_name()+" - "+obj.getSite_name());
             view.study_detail.setText(obj.getStudy_detail());
 
 

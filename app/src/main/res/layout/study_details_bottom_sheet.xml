@@ -93,6 +93,11 @@
 
                 </LinearLayout>
 
+                <com.github.mikephil.charting.charts.PieChart
+                    android:id="@+id/piechart"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp" />
+
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/randomise_btn"

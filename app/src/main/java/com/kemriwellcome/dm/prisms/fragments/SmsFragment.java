@@ -285,8 +285,6 @@ public class SmsFragment extends Fragment {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-                myShouldLoadMore =true;
-
                 VolleyLog.d("VOLLEY ERROE", "Error: " + error.getMessage());
                 MainActivity.getInstance().snack(VolleyErrors.getVolleyErrorMessages(error, context));
 
@@ -596,56 +594,4 @@ public class SmsFragment extends Fragment {
     }
 
 
-
-
-    public void loadChartData() {
-
-        // the labels that should be drawn on the XAxis
-        final String[] quarters = new String[] { "Q1", "Q2", "Q3", "Q4" };
-
-        List<Entry> valsComp1 = new ArrayList<Entry>();
-        List<Entry> valsComp2 = new ArrayList<Entry>();
-
-        valsComp1.add(new Entry(0, 2)); // 0 == quarter 1
-        valsComp1.add(new Entry(1, 5)); // 1 == quarter 2 ...
-        valsComp1.add(new Entry(2, 3)); // 2 == quarter 3 ...
-        valsComp1.add(new Entry(3, 7)); // 3 == quarter 4 ...
-
-        valsComp2.add(new Entry(0, 5)); // 0 == quarter 1
-        valsComp2.add(new Entry(1, 8)); // 1 == quarter 2 ...
-        valsComp2.add(new Entry(2, 6)); // 2 == quarter 3 ...
-        valsComp2.add(new Entry(3, 10)); // 3 == quarter 4 ...
-
-
-        LineDataSet setComp1 = new LineDataSet(valsComp1, "Inbox");
-        setComp1.setAxisDependency(YAxis.AxisDependency.LEFT);
-        LineDataSet setComp2 = new LineDataSet(valsComp2, "Outbox");
-        setComp2.setAxisDependency(YAxis.AxisDependency.LEFT);
-
-        // use the interface ILineDataSet
-        List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
-        dataSets.add(setComp1);
-        dataSets.add(setComp2);
-
-
-        ValueFormatter formatter = new ValueFormatter() {
-
-            @Override
-            public String getFormattedValue(float value) {
-                return quarters[(int) value];
-            }
-        };
-
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
-        xAxis.setValueFormatter(formatter);
-
-        LineData data = new LineData(dataSets);
-        chart.setData(data);
-        chart.invalidate(); // refresh
-
-
-
-
-    }
 }

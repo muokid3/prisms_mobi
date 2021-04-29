@@ -60,7 +60,7 @@
     <string name="forgot_your_pin">Forgot your password?</string>
     <string name="hey_there_nice_to_see_you_again">Hey there! Nice to see you again!</string>
     <string name="processing">Processing...</string>
-    <string name="allocation_rates">Allocation Rates</string>
+    <string name="allocation_rates">Randomization Rates</string>
     <string name="my_actions">My Actions</string>
     <string name="home_desc">Welcome to PRISMS (pilot implementation of Short Message Service for randomization)</string>
     <string name="you_do_not_have_any_studies_assigned_to_you_yet">You do not have any studies assigned to you yet</string>
