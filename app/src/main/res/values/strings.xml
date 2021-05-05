@@ -17,14 +17,6 @@
     <string name="allocation">Allocation</string>
 
 
-
-
-
-
-
-
-
-
     <string name="generic_server_down">Cannot Reach Server Using Device</string>
     <string name="connection">Please check your internet connection.</string>
     <string name="generic_error">Connection Not Established,Resend Request</string>
@@ -97,6 +89,12 @@
     <string name="randomise">Randomise</string>
     <string name="randomise_an_allocation">Randomise an allocation</string>
     <string name="ip_number">IP Number</string>
+    <string name="prisms_app">PRISMS APP</string>
+    <string name="version">Version</string>
+    <string name="about_prisms">PRISMS is a comparative pilot study of an SMS-based randomization
+platform versus sealed opaque envelopes nested within an ongoing multi-site randomized
+controlled trial in 12 hospitals in East Africa.</string>
+    <string name="term_of_services">Term of services</string>
 
 
 </resources>

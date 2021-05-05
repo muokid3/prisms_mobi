@@ -66,7 +66,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         loggedInUser = (User) Stash.getObject(Constants.USER, User.class);
-        //coordinator_layout = findViewById(R.id.coordinator_layout);
 
 
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
@@ -96,7 +95,24 @@ public class MainActivity extends AppCompatActivity {
         if (loggedInUser != null){
             drawer_name.setText(loggedInUser.getTitle()+" "+loggedInUser.getFirst_name()+" "+loggedInUser.getLast_name());
             drawer_phone.setText(loggedInUser.getEmail());
+
+            Menu menu =navigationView.getMenu();
+
+            MenuItem sites = menu.findItem(R.id.nav_site_main);
+            MenuItem allocation = menu.findItem(R.id.nav_allocation);
+
+            if (loggedInUser.getUser_group() != 1 && loggedInUser.getUser_group() != 2 ){
+                sites.setVisible(false);
+                allocation.setVisible(false);
+            }else {
+                sites.setVisible(true);
+                allocation.setVisible(true);
+            }
         }
+
+
+
+
 
 
 

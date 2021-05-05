@@ -83,6 +83,7 @@
 
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/chartCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="2dp"
@@ -283,6 +284,7 @@
                         android:layout_height="@dimen/spacing_large" />
 
                     <LinearLayout
+                        android:id="@+id/linearAdmin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">

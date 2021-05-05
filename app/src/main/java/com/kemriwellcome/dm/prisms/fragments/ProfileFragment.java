@@ -6,16 +6,19 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.fxn.stash.Stash;
 import com.google.firebase.auth.FirebaseAuth;
 
+import com.kemriwellcome.dm.prisms.AboutActivity;
 import com.kemriwellcome.dm.prisms.R;
 import com.kemriwellcome.dm.prisms.dependencies.Constants;
 import com.kemriwellcome.dm.prisms.models.User;
@@ -47,18 +50,24 @@ public class ProfileFragment extends Fragment {
     @BindView(R.id.name)
     TextView name;
 
-//
-//    @BindView(R.id.resourceCenterLayout)
-//    CardView resourceCenterLayout;
-//
-//    @BindView(R.id.checkinLayout)
-//    CardView checkinLayout;
-//
-//    @BindView(R.id.feedbackLayout)
-//    CardView feedbackLayout;
-//
-//    @BindView(R.id.jitengeLayout)
-//    CardView jitengeLayout;
+    @BindView(R.id.about)
+    LinearLayout about;
+
+    @BindView(R.id.notifications)
+    LinearLayout notifications;
+
+    @BindView(R.id.password)
+    LinearLayout password;
+
+    @BindView(R.id.messaging)
+    LinearLayout messaging;
+
+    @BindView(R.id.my_studies)
+    LinearLayout my_studies;
+
+    @BindView(R.id.personal_details)
+    LinearLayout personal_details;
+
 
 
 
@@ -85,6 +94,48 @@ public class ProfileFragment extends Fragment {
 
 
         name.setText(loggedInUser.getTitle()+" "+loggedInUser.getFirst_name()+" "+loggedInUser.getLast_name());
+
+        personal_details.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        my_studies.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(ProfileFragment.this).navigate(R.id.nav_studies);
+            }
+        });
+
+        messaging.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(ProfileFragment.this).navigate(R.id.nav_sms);
+            }
+        });
+
+        password.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        notifications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        about.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(context, AboutActivity.class));
+            }
+        });
 
 
 

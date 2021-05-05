@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -85,6 +86,12 @@ public class HomeFragment extends Fragment {
 
     @BindView(R.id.sites_layout)
     CardView sites_layout;
+
+    @BindView(R.id.chartCard)
+    CardView chartCard;
+
+    @BindView(R.id.linearAdmin)
+    LinearLayout linearAdmin;
 
     @BindView(R.id.allocation_layout)
     CardView allocation_layout;
@@ -178,7 +185,16 @@ public class HomeFragment extends Fragment {
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         l.setDrawInside(false);
 
-        getChartData();
+        if (loggedInUser!=null && (loggedInUser.getUser_group()==1 || loggedInUser.getUser_group()==2)){
+            chartCard.setVisibility(View.VISIBLE);
+            linearAdmin.setVisibility(View.VISIBLE);
+            getChartData();
+        }else {
+
+            chartCard.setVisibility(View.GONE);
+            linearAdmin.setVisibility(View.GONE);
+
+        }
 
         getMyStudies();
 
