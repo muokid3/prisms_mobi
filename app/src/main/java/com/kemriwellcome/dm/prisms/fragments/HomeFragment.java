@@ -36,6 +36,7 @@ import com.kemriwellcome.dm.prisms.dependencies.Constants;
 import com.kemriwellcome.dm.prisms.dependencies.Dialogs;
 import com.kemriwellcome.dm.prisms.dependencies.PrismsApplication;
 import com.kemriwellcome.dm.prisms.dependencies.VolleyErrors;
+import com.kemriwellcome.dm.prisms.models.SiteStudy;
 import com.kemriwellcome.dm.prisms.models.User;
 
 import org.json.JSONArray;
@@ -62,6 +63,9 @@ public class HomeFragment extends Fragment {
     private User loggedInUser;
 
     private static HomeFragment instance = null;
+
+    private ArrayList<SiteStudy> siteStudyArrayList;
+
 
 
 
@@ -109,6 +113,8 @@ public class HomeFragment extends Fragment {
 
         loggedInUser = (User) Stash.getObject(Constants.USER, User.class);
         instance = this;
+
+        siteStudyArrayList = new ArrayList<>();
 
 
 
@@ -173,6 +179,8 @@ public class HomeFragment extends Fragment {
         l.setDrawInside(false);
 
         getChartData();
+
+        getMyStudies();
 
 
 
@@ -283,6 +291,91 @@ public class HomeFragment extends Fragment {
 
         PrismsApplication.getInstance().addToRequestQueue(jsonObjReq);
     }
+
+    private void getMyStudies() {
+
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                Stash.getString(Constants.END_POINT)+ Constants.MY_STUDIES, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+
+                    //Log.e("resoponse", response.toString());
+
+                    siteStudyArrayList.clear();
+
+
+                    boolean  status = response.has("success") && response.getBoolean("success");
+                    String  message = response.has("message") ? response.getString("message") : "" ;
+                    String  errors = response.has("errors") ? response.getString("errors") : "" ;
+
+
+                    if (status){
+                        Stash.clear(Constants.OFFLINE_MY_STUDIES);
+
+                        JSONArray myArray = response.getJSONArray("data");
+
+                        for (int i = 0; i < myArray.length(); i++) {
+
+                            JSONObject item = (JSONObject) myArray.get(i);
+
+
+                            int  id = item.has("id") ? item.getInt("id") : 0;
+                            int  site_id = item.has("site_id") ? item.getInt("site_id") : 0;
+                            int  study_id = item.has("study_id") ? item.getInt("study_id") : 0;
+                            int  study_coordinator = item.has("study_coordinator") ? item.getInt("study_coordinator") : 0;
+                            String date_initiated = item.has("date_initiated") ? item.getString("date_initiated") : "";
+                            String studyStatus = item.has("status") ? item.getString("status") : "";
+                            String study_name = item.has("study_name") ? item.getString("study_name") : "";
+                            String study_detail = item.has("study_detail") ? item.getString("study_detail") : "";
+                            String site_name = item.has("site_name") ? item.getString("site_name") : "";
+
+                            SiteStudy site = new SiteStudy(id,site_id,study_id,study_coordinator,date_initiated,studyStatus,study_name,study_detail,site_name);
+
+                            siteStudyArrayList.add(site);
+
+                        }
+
+                        Stash.put(Constants.OFFLINE_MY_STUDIES,siteStudyArrayList);
+
+                    }else {
+                        //Dialogs.showWarningDialog(context,message,errors);
+
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                VolleyLog.d("VOLLEY ERROE", "Error: " + error.getMessage());
+                //MainActivity.getInstance().snack(VolleyErrors.getVolleyErrorMessages(error, context));
+
+            }
+        }){
+            /*
+             * Passing some request headers
+             */
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", loggedInUser.getToken_type()+" "+loggedInUser.getAccess_token());
+                headers.put("Content-Type", "application/json");
+                headers.put("Accept", "application/json");
+                return headers;
+            }
+        };
+
+        PrismsApplication.getInstance().addToRequestQueue(jsonObjReq);
+    }
+
 
 
     @Override

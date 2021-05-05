@@ -76,24 +76,6 @@
                 android:layout_height="@dimen/spacing_large" />
 
 
-            <com.facebook.shimmer.ShimmerFrameLayout
-                android:id="@+id/shimmer_my_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                shimmer:duration="800">
-
-                <LinearLayout
-                    android:id="@+id/shimmerInnerLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <include layout="@layout/small_placeholder_item" />
-                </LinearLayout>
-
-            </com.facebook.shimmer.ShimmerFrameLayout>
-
             <LinearLayout
                 android:id="@+id/no_studies"
                 android:layout_width="match_parent"

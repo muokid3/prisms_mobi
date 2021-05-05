@@ -38,6 +38,9 @@ public class Constants {
     public static String SHORTCODE = "23515";
 
 
+    public static String OFFLINE_MY_STUDIES = "my_site_studies";
+
+
 
 
 
