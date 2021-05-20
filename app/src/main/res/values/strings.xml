@@ -92,9 +92,9 @@
     <string name="prisms_app">PRISMS APP</string>
     <string name="version">Version</string>
     <string name="about_prisms">PRISMS is a comparative pilot study of an SMS-based randomization
-platform versus sealed opaque envelopes nested within an ongoing multi-site randomized
-controlled trial in 12 hospitals in East Africa.</string>
+platform versus sealed opaque envelopes.</string>
     <string name="term_of_services">Term of services</string>
+    <string name="kemri_wellcome_trust_research_programme_nairobi_kenya">Dennis Muoki, KEMRI Wellcome Trust Research Programme</string>
 
 
 </resources>

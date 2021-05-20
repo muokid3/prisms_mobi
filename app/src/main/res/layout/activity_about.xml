@@ -94,7 +94,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="KEMRI Wellcome Trust Research Programme (Nairobi, Kenya)"
+                    android:text="@string/kemri_wellcome_trust_research_programme_nairobi_kenya"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                     android:textColor="@color/grey_90" />
 
