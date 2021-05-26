@@ -7,28 +7,28 @@
 
     <fragment
         android:id="@+id/nav_home"
-        android:name="com.kemriwellcome.dm.prisms.fragments.HomeFragment"
+        android:name="com.kemriwellcometrust.dm.prisms.fragments.HomeFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/nav_studies"
-        android:name="com.kemriwellcome.dm.prisms.fragments.MyStudiesFragment"
+        android:name="com.kemriwellcometrust.dm.prisms.fragments.MyStudiesFragment"
         android:label="Studies" />
     <fragment
         android:id="@+id/nav_profile"
-        android:name="com.kemriwellcome.dm.prisms.fragments.ProfileFragment"
+        android:name="com.kemriwellcometrust.dm.prisms.fragments.ProfileFragment"
         android:label="Profile" />
     <fragment
         android:id="@+id/nav_sms"
-        android:name="com.kemriwellcome.dm.prisms.fragments.SmsFragment"
+        android:name="com.kemriwellcometrust.dm.prisms.fragments.SmsFragment"
         android:label="Sms" />
     <fragment
         android:id="@+id/nav_site_main"
-        android:name="com.kemriwellcome.dm.prisms.fragments.sites.SiteMainFragment"
+        android:name="com.kemriwellcometrust.dm.prisms.fragments.sites.SiteMainFragment"
         android:label="Sites/Studies" />
     <fragment
         android:id="@+id/nav_allocation"
-        android:name="com.kemriwellcome.dm.prisms.fragments.allocation.AllocationMainFragment"
+        android:name="com.kemriwellcometrust.dm.prisms.fragments.allocation.AllocationMainFragment"
         android:label="Allocation Lists" />
 
 
