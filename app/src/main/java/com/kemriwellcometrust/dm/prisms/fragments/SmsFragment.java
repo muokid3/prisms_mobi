@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,12 +27,14 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.shimmer.ShimmerFrameLayout;
 import com.fxn.stash.Stash;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -181,6 +184,7 @@ public class SmsFragment extends Fragment {
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         l.setDrawInside(false);
 
+
         getChartData();
 
         //loadChartData();
@@ -199,7 +203,7 @@ public class SmsFragment extends Fragment {
             public void onResponse(JSONObject response) {
                 try {
 
-//                    Log.e("resoponse", response.toString());
+                   Log.e("resoponse for sms", response.toString());
 
 
                     boolean  status = response.has("success") && response.getBoolean("success");
@@ -214,7 +218,7 @@ public class SmsFragment extends Fragment {
 
 
                             // the labels that should be drawn on the XAxis
-                            String[] datesArray = new String[myArray.length()];
+                            List<String> datesArray = new ArrayList<>();
 
                             List<Entry> inbox = new ArrayList<Entry>();
                             List<Entry> outbox = new ArrayList<Entry>();
@@ -228,7 +232,7 @@ public class SmsFragment extends Fragment {
                                 int  outboxNo = item.has("outbox") ? item.getInt("outbox") : 0;
                                 String date = item.has("date") ? item.getString("date") : "";
 
-                                datesArray[i] = date;
+                                datesArray.add(date);
 
                                 inbox.add(new Entry(i, inboxNo));
                                 outbox.add(new Entry(i, outboxNo));
@@ -246,17 +250,34 @@ public class SmsFragment extends Fragment {
                             dataSets.add(inboxDataset);
                             dataSets.add(outboxDataset);
 
-                            ValueFormatter formatter = new ValueFormatter() {
-
-                                @Override
-                                public String getFormattedValue(float value) {
-                                    return datesArray[(int) value];
-                                }
-                            };
+//                            ValueFormatter formatter = new ValueFormatter() {
+//
+//                                @Override
+//                                public String getFormattedValue(float value) {
+//                                    int index = Math.round(value);
+//                                    Log.e("value", String.valueOf(index));
+//
+//                                    if (datesArray == null){
+//                                        return  null;
+//                                    }else {
+//                                        if (index == -1){
+//                                            return datesArray.get(0);
+//                                        }else {
+//
+//                                            if(index < datesArray.size()) {
+//                                                return datesArray.get(index);
+//                                            }
+//                                            return null;
+//                                        }
+//                                    }
+//                                }
+//                            };
 
                             XAxis xAxis = chart.getXAxis();
                             xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
-                            xAxis.setValueFormatter(formatter);
+                            //xAxis.setValueFormatter(formatter);
+                            chart.getXAxis().setValueFormatter(new com.github.mikephil.charting.formatter.IndexAxisValueFormatter(datesArray));
+
 
                             LineData data = new LineData(dataSets);
                             chart.setData(data);
@@ -329,7 +350,7 @@ public class SmsFragment extends Fragment {
             public void onResponse(JSONObject response) {
                 try {
 
-//                    Log.e("resoponse", response.toString());
+                   Log.e("resoponse", response.toString());
 
                     smsArrayList.clear();
 
@@ -370,8 +391,13 @@ public class SmsFragment extends Fragment {
                                 int  inboxStatus = item.has("status") ? item.getInt("status") : 0;
                                 String latency = item.has("latency") ? item.getString("latency") : "";
 
+                                JSONObject outboxObj;
 
-                                JSONObject outboxObj = item.has("outbox") ? item.getJSONObject("outbox") : null;
+                                if (item.has("outbox") && !item.isNull("outbox")){
+                                    outboxObj = item.getJSONObject("outbox");
+                                }else {
+                                    outboxObj = null;
+                                }
 
                                 Sms sms;
 

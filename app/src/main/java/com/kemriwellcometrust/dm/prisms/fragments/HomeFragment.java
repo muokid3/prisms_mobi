@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -213,7 +214,7 @@ public class HomeFragment extends Fragment {
             public void onResponse(JSONObject response) {
                 try {
 
-//                    Log.e("resoponse", response.toString());
+                    Log.e("resoponse", response.toString());
 
 
                     boolean  status = response.has("success") && response.getBoolean("success");
@@ -224,11 +225,14 @@ public class HomeFragment extends Fragment {
                     if (status){
                         JSONArray myArray = response.getJSONArray("data");
 
+                        Log.e("myarray", myArray.toString());
+
+
                         if (myArray.length() > 0){
 
 
                             // the labels that should be drawn on the XAxis
-                            String[] datesArray = new String[myArray.length()];
+                            List<String> datesArray = new ArrayList<>();
 
                             List<Entry> randomization = new ArrayList<Entry>();
 
@@ -240,7 +244,7 @@ public class HomeFragment extends Fragment {
                                 int  total = item.has("total") ? item.getInt("total") : 0;
                                 String date_randomised = item.has("date_randomised") ? item.getString("date_randomised") : "";
 
-                                datesArray[i] = date_randomised;
+                                datesArray.add(date_randomised);
 
                                 randomization.add(new Entry(i, total));
                             }
@@ -254,18 +258,35 @@ public class HomeFragment extends Fragment {
                             List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
                             dataSets.add(randomizationDataset);
 
-                            ValueFormatter formatter = new ValueFormatter() {
-
-                                @Override
-                                public String getFormattedValue(float value) {
-                                    return datesArray[(int) value];
-                                }
-                            };
+//                            ValueFormatter formatter = new ValueFormatter() {
+//
+//                                @Override
+//                                public String getFormattedValue(float value) {
+//                                    int index = Math.round(value);
+//                                    Log.e("value", String.valueOf(index));
+//
+//                                    if (datesArray == null){
+//                                        return  null;
+//                                    }else {
+//                                        if (index == -1){
+//                                            return datesArray[0];
+//                                        }else {
+//
+//                                            if(index < datesArray.length) {
+//                                                return datesArray[index];
+//                                            }
+//                                            return null;
+//                                        }
+//                                    }
+//                                }
+//                            };
 
                             if (chart!=null){
                                 XAxis xAxis = chart.getXAxis();
                                 xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
-                                xAxis.setValueFormatter(formatter);
+                                //xAxis.setValueFormatter(formatter);
+                                chart.getXAxis().setValueFormatter(new com.github.mikephil.charting.formatter.IndexAxisValueFormatter(datesArray));
+
 
                                 LineData data = new LineData(dataSets);
                                 chart.setData(data);
