@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,6 +88,9 @@ public class StudyDetails extends BottomSheetDialogFragment {
     @BindView(R.id.site_name)
     TextView site_name;
 
+    @BindView(R.id.total_randomizations)
+    TextView total_randomizations;
+
     @BindView(R.id.randomise_btn)
     Button randomise_btn;
 
@@ -137,25 +141,26 @@ public class StudyDetails extends BottomSheetDialogFragment {
             }
         });
 
-        piechart.setUsePercentValues(true);
-        piechart.getDescription().setEnabled(false);
-        piechart.setExtraOffsets(5, 10, 5, 5);
+//        piechart.setUsePercentValues(true);
+//        piechart.getDescription().setEnabled(false);
+//        piechart.setExtraOffsets(5, 10, 5, 5);
+//
+//        piechart.setDragDecelerationFrictionCoef(0.95f);
+//
+//
+//        piechart.setDrawHoleEnabled(true);
+//        piechart.setHoleColor(Color.WHITE);
+//
+//
+//        piechart.setDrawCenterText(true);
+//
+//        piechart.setRotationAngle(0);
+//        // enable rotation of the chart by touch
+//        piechart.setRotationEnabled(true);
+//        piechart.setHighlightPerTapEnabled(true);
 
-        piechart.setDragDecelerationFrictionCoef(0.95f);
-
-
-        piechart.setDrawHoleEnabled(true);
-        piechart.setHoleColor(Color.WHITE);
-
-
-        piechart.setDrawCenterText(true);
-
-        piechart.setRotationAngle(0);
-        // enable rotation of the chart by touch
-        piechart.setRotationEnabled(true);
-        piechart.setHighlightPerTapEnabled(true);
-
-        getChartData();
+        //getChartData();
+        getTotalRandz();
 
         return view;
     }
@@ -256,7 +261,7 @@ public class StudyDetails extends BottomSheetDialogFragment {
             public void onResponse(JSONObject response) {
                 try {
 
-//                    Log.e("resoponse", response.toString());
+                   Log.e("resoponse", response.toString());
 
 
                     boolean  status = response.has("success") && response.getBoolean("success");
@@ -294,6 +299,62 @@ public class StudyDetails extends BottomSheetDialogFragment {
                             piechart.invalidate(); // refresh
 
                         }
+                    }else {
+                        Dialogs.showWarningDialog(context,message,errors);
+
+                    }
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                VolleyLog.d("VOLLEY ERROE", "Error: " + error.getMessage());
+                MainActivity.getInstance().snack(VolleyErrors.getVolleyErrorMessages(error, context));
+
+            }
+        }){
+            /*
+             * Passing some request headers
+             */
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", loggedInUser.getToken_type()+" "+loggedInUser.getAccess_token());
+                headers.put("Content-Type", "application/json");
+                headers.put("Accept", "application/json");
+                return headers;
+            }
+        };
+
+        PrismsApplication.getInstance().addToRequestQueue(jsonObjReq);
+    }
+
+    private void getTotalRandz () {
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
+                Stash.getString(Constants.END_POINT)+ Constants.TOTAL_RANDZ, null, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+
+//                    Log.e("resoponse", response.toString());
+
+
+                    boolean  status = response.has("success") && response.getBoolean("success");
+                    String message = response.has("message") ? response.getString("message") : "" ;
+                    String errors = response.has("errors") ? response.getString("errors") : "" ;
+
+
+                    if (status){
+                        total_randomizations.setText(message);
+                        total_randomizations.setVisibility(View.VISIBLE);
                     }else {
                         Dialogs.showWarningDialog(context,message,errors);
 

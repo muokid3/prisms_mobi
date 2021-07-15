@@ -42,6 +42,8 @@ public class Constants {
 
     public static String UPLOAD_ALLOCATION_LIST = "allocation_list/upload";
 
+    public static String TOTAL_RANDZ = "user_randomizations";
+
 
 
 

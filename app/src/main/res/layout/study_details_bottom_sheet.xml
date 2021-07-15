@@ -79,8 +79,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:padding="8dp"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginBottom="@dimen/spacing_large">
+                    android:layout_gravity="center_vertical">
 
                     <TextView
                         android:id="@+id/site_name"
@@ -93,8 +92,28 @@
 
                 </LinearLayout>
 
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="8dp"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginBottom="@dimen/spacing_large">
+
+                    <TextView
+                        android:id="@+id/total_randomizations"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:textColor="#444"
+                        android:textSize="14sp"/>
+
+                </LinearLayout>
+
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/piechart"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="200dp" />
 
