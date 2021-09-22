@@ -15,8 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,6 +99,7 @@ public class StudyDetails extends BottomSheetDialogFragment {
 
     @BindView(R.id.piechart)
     PieChart piechart;
+
 
     private User loggedInUser;
 
@@ -190,9 +194,15 @@ public class StudyDetails extends BottomSheetDialogFragment {
         TextView study_name = dialog.findViewById(R.id.study_name);
         TextView site_name = dialog.findViewById(R.id.site_name);
         EditText et_ip_no = dialog.findViewById(R.id.et_ip_no);
+        LinearLayout stratumLayout = dialog.findViewById(R.id.stratumLayout);
+        Spinner stratumSpinner = dialog.findViewById(R.id.stratumSpinner);
 
         study_name.setText("Study: "+siteStudy.getStudy_name());
         site_name.setText("Site: "+siteStudy.getSite_name());
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item, siteStudy.getStrata());
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        stratumSpinner.setAdapter(adapter);
 
 
 
@@ -202,7 +212,7 @@ public class StudyDetails extends BottomSheetDialogFragment {
                 if (TextUtils.isEmpty(et_ip_no.getText().toString())) {
                     et_ip_no.setError("Please enter IP Number");
                 } else {
-                    randomise(siteStudy, et_ip_no.getText().toString());
+                    randomise(siteStudy, et_ip_no.getText().toString(),stratumSpinner.getAdapter().getItem(stratumSpinner.getSelectedItemPosition()).toString());
                     dialog.dismiss();
                 }
             }
@@ -213,8 +223,14 @@ public class StudyDetails extends BottomSheetDialogFragment {
         dialog.getWindow().setAttributes(lp);
     }
 
-    private void randomise(SiteStudy siteStudy, String ipNo) {
-        message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_name()+" "+loggedInUser.getPhone_no();
+    private void randomise(SiteStudy siteStudy, String ipNo, String stratum) {
+
+        if(stratum.equals("Not stratified")){
+            message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_name()+" "+loggedInUser.getPhone_no();
+        }else {
+            message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_name()+" strat:"+stratum;
+        }
+
 
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.SEND_SMS)) {

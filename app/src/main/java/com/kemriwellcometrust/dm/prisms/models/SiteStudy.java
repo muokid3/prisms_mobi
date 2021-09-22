@@ -1,5 +1,7 @@
 package com.kemriwellcometrust.dm.prisms.models;
 
+import java.util.ArrayList;
+
 public class SiteStudy {
 
     private int id;
@@ -11,9 +13,10 @@ public class SiteStudy {
     private String study_name;
     private String study_detail;
     private String site_name;
+    private ArrayList<String> strata;
 
     public SiteStudy(int id, int site_id, int study_id, int study_coordinator, String date_initiated, String status, String study_name,
-                     String study_detail, String site_name) {
+                     String study_detail, String site_name, ArrayList<String> strata) {
         this.id = id;
         this.site_id = site_id;
         this.study_id = study_id;
@@ -23,6 +26,7 @@ public class SiteStudy {
         this.study_name = study_name;
         this.study_detail = study_detail;
         this.site_name = site_name;
+        this.strata = strata;
     }
 
     public int getId() {
@@ -95,5 +99,13 @@ public class SiteStudy {
 
     public void setSite_name(String site_name) {
         this.site_name = site_name;
+    }
+
+    public ArrayList<String> getStrata() {
+        return strata;
+    }
+
+    public void setStrata(ArrayList<String> strata) {
+        this.strata = strata;
     }
 }
