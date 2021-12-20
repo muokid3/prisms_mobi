@@ -95,6 +95,13 @@
 platform versus sealed opaque envelopes.</string>
     <string name="term_of_services">Term of services</string>
     <string name="kemri_wellcome_trust_research_programme_nairobi_kenya">Dennis Muoki, KEMRI Wellcome Trust Research Programme</string>
+    <string name="take_a_survey">Take a survey</string>
+    <string name="post_study_survey">Post study survey</string>
+    <string name="please_take_a_quick_post_study_survey_and_share_your_feedback">Please take a quick post study survey and share your feedback</string>
+    <string name="this_survey_is_complete_thank_you_for_your_participation">This survey is complete. Thank you for your participation</string>
+    <string name="answer">Answer</string>
+    <string name="specify_other">Specify other</string>
+    <string name="submit">Submit</string>
 
 
 </resources>

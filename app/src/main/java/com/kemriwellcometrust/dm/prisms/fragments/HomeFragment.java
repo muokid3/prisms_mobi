@@ -91,6 +91,9 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.chartCard)
     CardView chartCard;
 
+    @BindView(R.id.survey_layout)
+    CardView survey_layout;
+
     @BindView(R.id.linearAdmin)
     LinearLayout linearAdmin;
 
@@ -155,6 +158,14 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.nav_allocation);
+            }
+        });
+
+
+        survey_layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NavHostFragment.findNavController(HomeFragment.this).navigate(R.id.nav_survey);
             }
         });
 
