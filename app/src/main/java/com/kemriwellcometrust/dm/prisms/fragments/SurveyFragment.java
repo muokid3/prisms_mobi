@@ -1,7 +1,9 @@
 package com.kemriwellcometrust.dm.prisms.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,10 +28,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.fxn.stash.Stash;
+import com.kemriwellcometrust.dm.prisms.MainActivity;
 import com.kemriwellcometrust.dm.prisms.R;
 import com.kemriwellcometrust.dm.prisms.dependencies.Constants;
 import com.kemriwellcometrust.dm.prisms.dependencies.Dialogs;
 import com.kemriwellcometrust.dm.prisms.dependencies.PrismsApplication;
+import com.kemriwellcometrust.dm.prisms.dependencies.VolleyErrors;
 import com.kemriwellcometrust.dm.prisms.models.Answer;
 import com.kemriwellcometrust.dm.prisms.models.Question;
 import com.kemriwellcometrust.dm.prisms.models.User;
@@ -56,8 +60,17 @@ public class SurveyFragment extends Fragment {
     private Context context;
 
     private User loggedInUser;
+    public ProgressDialog mProgressDialog;
+
 
     private int selectedSingleAnswerId = 0;
+    private String selectedAnswer = "";
+    private boolean hasFollowUp = false;
+
+    List<Integer> multipleAnswerIds = new ArrayList<>();
+
+    private Question questionObject;
+
 
 
     @BindView(R.id.questionTV)
@@ -71,6 +84,9 @@ public class SurveyFragment extends Fragment {
 
     @BindView(R.id.open_ended_answerET)
     EditText open_ended_answerET;
+
+    @BindView(R.id.other_specifyET)
+    EditText other_specifyET;
 
     @BindView(R.id.options_linear)
     LinearLayout options_linear;
@@ -109,12 +125,109 @@ public class SurveyFragment extends Fragment {
 
         loggedInUser = (User) Stash.getObject(Constants.USER, User.class);
 
+        btn_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (questionObject!=null){
+                    if (questionObject.getType().equals("CHOICE")){
+                        processChoiceQuestion();
+                    }else if (questionObject.getType().equals("OPEN")){
+                        processOpenEnded();
+                    }
+                }else {
+                    Dialogs.showWarningDialog(context,"Question  not found", "Please select an answer from a valid question before submitting");
+                }
+            }
+        });
 
 
         getQuestion();
 
 
         return root;
+    }
+
+    private void processOpenEnded() {
+
+        if (TextUtils.isEmpty(open_ended_answerET.getText().toString())){
+            open_ended_answerET.setError("Please type an answer");
+        }else {
+            JSONObject payload = new JSONObject();
+            try {
+                payload.put("question_id", questionObject.getId());
+                payload.put("open_ended_answer", open_ended_answerET.getText().toString());
+
+                postAnswer(payload);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void processChoiceQuestion() {
+        if (questionObject.getAnswer_count().equals("SINGLE")){
+            if (selectedSingleAnswerId == 0){
+                Dialogs.showWarningDialog(context,"Missing answer", "Please select an answer");
+            }else {
+                if (selectedAnswer.equals("Other (specify)") && TextUtils.isEmpty(other_specifyET.getText().toString())){
+                    Dialogs.showWarningDialog(context,"Specify other", "Please type on the text box to specify other");
+                    other_specifyET.setError("This field is required");
+                }else {
+
+                    if (hasFollowUp && TextUtils.isEmpty(followup_answerET.getText().toString())){
+                        Dialogs.showWarningDialog(context,"Answer required", "Please type on the text box to answer the additional question");
+                        followup_answerET.setError("This field is required");
+                    }else {
+                        JSONObject payload = new JSONObject();
+                        try {
+                            payload.put("question_id", questionObject.getId());
+                            payload.put("answer_id", selectedSingleAnswerId);
+                            payload.put("details", other_specifyET.getText().toString());
+                            payload.put("follow_up_answer", followup_answerET.getText().toString());
+
+                            postAnswer(payload);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+
+        }else if (questionObject.getAnswer_count().equals("MULTIPLE")){
+            if (multipleAnswerIds.size() == 0){
+                Dialogs.showWarningDialog(context,"Answer required", "Please select at least one option from the answers");
+            }else {
+                JSONObject payload = new JSONObject();
+                try {
+
+                    StringBuilder str = new StringBuilder("");
+                    // Traversing the ArrayList
+                    for (int eachstring : multipleAnswerIds) {
+                        // Each element in ArrayList is appended
+                        // followed by comma
+                        str.append(eachstring).append(",");
+                    }
+
+                    // StringBuffer to String conversion
+                    String commaseparatedlist = str.toString();
+
+                    // Condition check to remove the last comma
+                    if (commaseparatedlist.length() > 0)
+                        commaseparatedlist = commaseparatedlist.substring(0, commaseparatedlist.length() - 1);
+
+                    payload.put("question_id", questionObject.getId());
+                    payload.put("answers_ids", commaseparatedlist);
+
+                    postAnswer(payload);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
     }
 
     @Override
@@ -170,7 +283,6 @@ public class SurveyFragment extends Fragment {
 
                             JSONArray  answers = item.has("answers") && !item.isNull("answers") ? item.getJSONArray("answers") : null;
 
-                            Question questionObject;
                             List<Answer> answerList = new ArrayList<>();
 
                             if (answers!=null){
@@ -246,6 +358,7 @@ public class SurveyFragment extends Fragment {
                                                 public void onClick(View v) {
                                                     if (radioButton.isChecked()){
                                                         selectedSingleAnswerId = ans.getId();
+                                                        selectedAnswer = ans.getAnswer();
                                                         //Toast.makeText(context,selectedSingleAnswerId+" is answer id for "+ ans.getAnswer(), Toast.LENGTH_SHORT).show();
 
                                                         if (ans.getAnswer().equals("Other (specify)")){
@@ -256,8 +369,10 @@ public class SurveyFragment extends Fragment {
 
                                                         //check if needs follow up and add
                                                         if (ans.getFollowup() == null){
+                                                            hasFollowUp = false;
                                                             followup_linear.setVisibility(View.GONE);
                                                         }else {
+                                                            hasFollowUp = true;
                                                             followup_linear.setVisibility(View.VISIBLE);
                                                             followUpQuestionTV.setText(ans.getFollowup().getFollowup_question());
                                                         }
@@ -286,13 +401,18 @@ public class SurveyFragment extends Fragment {
                                                     //add or remove to array
                                                     //Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
 
+                                                    if (isChecked)
+                                                        multipleAnswerIds.add(ans.getId());
+                                                    else
+                                                        multipleAnswerIds.remove(new Integer(ans.getId()));
+
                                                     //check if needs follow up and add
-                                                    if (ans.getFollowup() == null){
-                                                        followup_linear.setVisibility(View.GONE);
-                                                    }else {
-                                                        followup_linear.setVisibility(View.VISIBLE);
-                                                        followUpQuestionTV.setText(ans.getFollowup().getFollowup_question());
-                                                    }
+//                                                    if (ans.getFollowup() == null){
+//                                                        followup_linear.setVisibility(View.GONE);
+//                                                    }else {
+//                                                        followup_linear.setVisibility(View.VISIBLE);
+//                                                        followUpQuestionTV.setText(ans.getFollowup().getFollowup_question());
+//                                                    }
                                                 }
                                             });
 
@@ -364,6 +484,77 @@ public class SurveyFragment extends Fragment {
         };
 
         PrismsApplication.getInstance().addToRequestQueue(jsonObjReq);
+    }
+
+    private void postAnswer(JSONObject payload) {
+
+        showProgressDialog();
+        JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.POST,
+                Stash.getString(Constants.END_POINT)+ Constants.POST_ANSWER, payload, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                hideProgressDialog();
+                try {
+                    boolean success = response.has("success") && response.getBoolean("success");
+                    String message = response.has("message") ? response.getString("message") : "";
+                    String errors = response.has("errors") ? response.getString("errors") : "";
+
+                    if (success) {
+                        Dialogs.showOkDialog(context,"Success",message);
+                        getQuestion();
+                    } else {
+                        Dialogs.showWarningDialog(context,message,errors);
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    Log.e("JSON Exception: ", e.getMessage());
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                hideProgressDialog();
+                VolleyLog.d("VOLLEY ERROE", "Error: " + error.getMessage());
+                MainActivity.getInstance().snack(VolleyErrors.getVolleyErrorMessages(error, context));
+
+            }
+        }){
+            /*
+             * Passing some request headers
+             */
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Authorization", loggedInUser.getToken_type()+" "+loggedInUser.getAccess_token());
+                headers.put("Content-Type", "application/json");
+                headers.put("Accept", "application/json");
+                return headers;
+            }
+        };
+
+        PrismsApplication.getInstance().addToRequestQueue(jsonObjReq);
+    }
+
+
+    public void showProgressDialog() {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(context);
+            mProgressDialog.setMessage(getString(R.string.processing));
+            mProgressDialog.setIndeterminate(true);
+            mProgressDialog.setCancelable(false);
+        }
+
+        mProgressDialog.show();
+    }
+
+    public void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
     }
 
 
