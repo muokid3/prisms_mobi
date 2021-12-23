@@ -227,8 +227,10 @@ public class StudyDetails extends BottomSheetDialogFragment {
 
         if(stratum.equals("Not stratified")){
             message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_name()+" "+loggedInUser.getPhone_no();
+        }else if (stratum.equals("Supportive care")){
+            message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_name()+" "+loggedInUser.getPhone_no()+" supportive";
         }else {
-            message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_name()+" strat:"+stratum;
+            message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_name()+" "+loggedInUser.getPhone_no();
         }
 
 
