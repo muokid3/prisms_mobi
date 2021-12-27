@@ -13,8 +13,8 @@ public class Constants {
 
     /*API Variables*/
 
-    public static String API_VERSION = "prisms_api_test";
-//    public static String API_VERSION = "prisms_api_v0";
+//    public static String API_VERSION = "prisms_api_test";
+    public static String API_VERSION = "prisms_api_v0";
 
     public static String LOGIN = "auth/login";
 
