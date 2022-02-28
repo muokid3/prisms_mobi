@@ -13,10 +13,11 @@ public class SiteStudy {
     private String study_name;
     private String study_detail;
     private String site_name;
+    private String site_prefix;
     private ArrayList<String> strata;
 
     public SiteStudy(int id, int site_id, int study_id, int study_coordinator, String date_initiated, String status, String study_name,
-                     String study_detail, String site_name, ArrayList<String> strata) {
+                     String study_detail, String site_name, String site_prefix, ArrayList<String> strata) {
         this.id = id;
         this.site_id = site_id;
         this.study_id = study_id;
@@ -26,6 +27,7 @@ public class SiteStudy {
         this.study_name = study_name;
         this.study_detail = study_detail;
         this.site_name = site_name;
+        this.site_prefix = site_prefix;
         this.strata = strata;
     }
 
@@ -99,6 +101,14 @@ public class SiteStudy {
 
     public void setSite_name(String site_name) {
         this.site_name = site_name;
+    }
+
+    public String getSite_prefix() {
+        return site_prefix;
+    }
+
+    public void setSite_prefix(String site_prefix) {
+        this.site_prefix = site_prefix;
     }
 
     public ArrayList<String> getStrata() {

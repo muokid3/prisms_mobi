@@ -184,6 +184,7 @@ public class MyStudiesFragment extends Fragment {
                             String study_name = item.has("study_name") ? item.getString("study_name") : "";
                             String study_detail = item.has("study_detail") ? item.getString("study_detail") : "";
                             String site_name = item.has("site_name") ? item.getString("site_name") : "";
+                            String site_prefix = item.has("site_prefix") ? item.getString("site_prefix") : "";
                             JSONArray strataArray = item.has("strata") ? item.getJSONArray("strata") : new JSONArray();
 
                             ArrayList<String> list = new ArrayList<String>();
@@ -191,7 +192,7 @@ public class MyStudiesFragment extends Fragment {
                                 list.add(strataArray.get(j).toString());
                             }
 
-                            SiteStudy site = new SiteStudy(id,site_id,study_id,study_coordinator,date_initiated,studyStatus,study_name,study_detail,site_name, list);
+                            SiteStudy site = new SiteStudy(id,site_id,study_id,study_coordinator,date_initiated,studyStatus,study_name,study_detail,site_name, site_prefix, list);
 
                             siteStudyArrayList.add(site);
 

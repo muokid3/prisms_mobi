@@ -212,8 +212,14 @@ public class StudyDetails extends BottomSheetDialogFragment {
                 if (TextUtils.isEmpty(et_ip_no.getText().toString())) {
                     et_ip_no.setError("Please enter IP Number");
                 } else {
-                    randomise(siteStudy, et_ip_no.getText().toString(),stratumSpinner.getAdapter().getItem(stratumSpinner.getSelectedItemPosition()).toString());
-                    dialog.dismiss();
+                    if (stratumSpinner.getAdapter().getCount() > 0){
+                        randomise(siteStudy, et_ip_no.getText().toString(),stratumSpinner.getAdapter().getItem(stratumSpinner.getSelectedItemPosition()).toString());
+                        dialog.dismiss();
+                    }else {
+                        randomise(siteStudy, et_ip_no.getText().toString(),"Not stratified");
+                        dialog.dismiss();
+                    }
+
                 }
             }
         });
@@ -226,11 +232,11 @@ public class StudyDetails extends BottomSheetDialogFragment {
     private void randomise(SiteStudy siteStudy, String ipNo, String stratum) {
 
         if(stratum.equals("Not stratified")){
-            message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_name()+" "+loggedInUser.getPhone_no();
+            message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_prefix()+" "+loggedInUser.getPhone_no();
         }else if (stratum.equals("Supportive care")){
-            message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_name()+" "+loggedInUser.getPhone_no()+" supportive";
+            message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_prefix()+" "+loggedInUser.getPhone_no()+" supportive";
         }else {
-            message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_name()+" "+loggedInUser.getPhone_no();
+            message = "randomise "+ipNo+" to "+siteStudy.getStudy_name()+" "+siteStudy.getSite_prefix()+" "+loggedInUser.getPhone_no();
         }
 
 
