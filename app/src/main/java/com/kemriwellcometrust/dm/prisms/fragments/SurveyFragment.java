@@ -267,12 +267,30 @@ public class SurveyFragment extends Fragment {
 
                     if (status){
 
-                        btn_submit.setVisibility(View.VISIBLE);
+                        if (options_linear!=null)
+                            options_linear.removeAllViews();
+
+                        if (specify_other_linear!=null)
+                            specify_other_linear.setVisibility(View.GONE);
+
+                        if (followup_linear!=null)
+                            followup_linear.setVisibility(View.GONE);
+
+                        if (open_ended_linear!=null)
+                            open_ended_linear.setVisibility(View.GONE);
+
+                        if(btn_submit!=null)
+                            btn_submit.setVisibility(View.VISIBLE);
 
                         JSONArray myArray = response.getJSONArray("data");
 
                         if (myArray.length() == 0){
                             no_survey.setVisibility(View.VISIBLE);
+                            questionTV.setVisibility(View.GONE);
+                            followup_linear.setVisibility(View.GONE);
+                            open_ended_linear.setVisibility(View.GONE);
+                            specify_other_linear.setVisibility(View.GONE);
+                            btn_submit.setVisibility(View.GONE);
                         }else {
                             JSONObject item = (JSONObject) myArray.get(0);
 
@@ -361,7 +379,7 @@ public class SurveyFragment extends Fragment {
                                                         selectedAnswer = ans.getAnswer();
                                                         //Toast.makeText(context,selectedSingleAnswerId+" is answer id for "+ ans.getAnswer(), Toast.LENGTH_SHORT).show();
 
-                                                        if (ans.getAnswer().equals("Other (specify)")){
+                                                        if (ans.getAnswer().equals("Other (specify)") || ans.getAnswer().equals("Yes (specify)")){
                                                             specify_other_linear.setVisibility(View.VISIBLE);
                                                         }else {
                                                             specify_other_linear.setVisibility(View.GONE);
@@ -374,6 +392,7 @@ public class SurveyFragment extends Fragment {
                                                         }else {
                                                             hasFollowUp = true;
                                                             followup_linear.setVisibility(View.VISIBLE);
+                                                            followup_answerET.setText("");
                                                             followUpQuestionTV.setText(ans.getFollowup().getFollowup_question());
                                                         }
 
@@ -432,22 +451,6 @@ public class SurveyFragment extends Fragment {
                             }
 
                             //Log.e("question type::",questionObject.getType());
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
                         }
 

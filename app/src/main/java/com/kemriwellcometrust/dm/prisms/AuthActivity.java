@@ -30,12 +30,12 @@ import java.util.Objects;
 
 public class AuthActivity extends AppCompatActivity implements NavigationHost {
 
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
+//    private FirebaseAuth mAuth;
+//    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     private User loggedInUser;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference myRef = database.getReference().child(Constants.API_VERSION);
+//    FirebaseDatabase database = FirebaseDatabase.getInstance();
+//    DatabaseReference myRef = database.getReference().child(Constants.API_VERSION);
 
 
     @Override
@@ -56,45 +56,59 @@ public class AuthActivity extends AppCompatActivity implements NavigationHost {
             finish();
         }
 
-        mAuth = FirebaseAuth.getInstance();
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        if (Constants.API_VERSION.equals("prisms_api_v0")){
+            Stash.put(Constants.END_POINT, "https://prisms.kemri-wellcome.org/api/");
+            Log.e("endpoint:", "https://prisms.kemri-wellcome.org/api/");
+        }else {
+            Stash.put(Constants.END_POINT, "https://prismsuat.kemri-wellcome.org/api/");
+            Log.e("endpoint:", "https://prismsuat.kemri-wellcome.org/api/");
+        }
 
-                if (firebaseAuth.getCurrentUser() == null) {
-                    Log.e("FIREBASE::", "Signing in....");
-                    signInAnonymously();
-                }else {
-                    getCreds();
-                }
+        Fragment newFragment = LoginFragment.getInstance(AuthActivity.this);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.container, newFragment)
+                .commitAllowingStateLoss();
 
-            }
-        };
+//        mAuth = FirebaseAuth.getInstance();
+//        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+//            @Override
+//            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+//
+//                if (firebaseAuth.getCurrentUser() == null) {
+//                    Log.e("FIREBASE::", "Signing in....");
+//                    signInAnonymously();
+//                }else {
+//                    getCreds();
+//                }
+//
+//            }
+//        };
     }
 
-    private void signInAnonymously() {
-        mAuth.signInAnonymously()
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            Log.e("FIREBASE::", "signInAnonymously:success");
-                            getCreds();
-
-                            //FirebaseUser user = mAuth.getCurrentUser();
-                            // updateUI(user);
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Log.e("FIREBASE::", "signInAnonymously:failure", task.getException());
-//                            Toast.makeText(AnonymousAuthActivity.this, "Authentication failed.",
-//                                    Toast.LENGTH_SHORT).show();
-//                            updateUI(null);
-                        }
-                    }
-                });
-
-    }
+//    private void signInAnonymously() {
+//        mAuth.signInAnonymously()
+//                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                        if (task.isSuccessful()) {
+//                            // Sign in success, update UI with the signed-in user's information
+//                            Log.e("FIREBASE::", "signInAnonymously:success");
+//                            getCreds();
+//
+//                            //FirebaseUser user = mAuth.getCurrentUser();
+//                            // updateUI(user);
+//                        } else {
+//                            // If sign in fails, display a message to the user.
+//                            Log.e("FIREBASE::", "signInAnonymously:failure", task.getException());
+////                            Toast.makeText(AnonymousAuthActivity.this, "Authentication failed.",
+////                                    Toast.LENGTH_SHORT).show();
+////                            updateUI(null);
+//                        }
+//                    }
+//                });
+//
+//    }
 
     /**
      * Navigate to the given fragment.
@@ -116,29 +130,31 @@ public class AuthActivity extends AppCompatActivity implements NavigationHost {
         transaction.commitAllowingStateLoss();
     }
 
-    private void getCreds() {
-        myRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                try {
-                    updateDataSnapshot(dataSnapshot);
-
-                } catch (NullPointerException ex) {
-                    Log.e("nullpointer detected", ex.toString());
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError error) {
-                // Failed to read value
-//                    Log.w(TAG, "Failed to read value.", error.toException());
-            }
-        });
-    }
+//    private void getCreds() {
+//        myRef.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//                try {
+//                    Log.e("Calling: ","updateDataSnapshot");
+//                    updateDataSnapshot(dataSnapshot);
+//
+//                } catch (NullPointerException ex) {
+//                    Log.e("nullpointer detected", ex.toString());
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError error) {
+//                // Failed to read value
+////                    Log.w(TAG, "Failed to read value.", error.toException());
+//            }
+//        });
+//    }
 
     public void updateDataSnapshot(DataSnapshot dataSnapshot) {
+
         Stash.put(Constants.END_POINT, Objects.requireNonNull(dataSnapshot.getValue(Creds.class)).getEnd_point());
 
         Log.e("endpoint:", dataSnapshot.getValue(Creds.class).getEnd_point());
@@ -154,16 +170,16 @@ public class AuthActivity extends AppCompatActivity implements NavigationHost {
     @Override
     protected void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthStateListener);
+//        mAuth.addAuthStateListener(mAuthStateListener);
     }
 
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mAuthStateListener != null) {
-            mAuth.removeAuthStateListener(mAuthStateListener);
-        }
+//        if (mAuthStateListener != null) {
+//            mAuth.removeAuthStateListener(mAuthStateListener);
+//        }
     }
 
 }

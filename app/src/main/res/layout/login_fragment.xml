@@ -194,6 +194,7 @@
                     android:id="@+id/forgot_pin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:visibility="gone"
                     style="@style/Button.Accent.Borderless"
                     android:text="@string/forgot_your_pin"
                     android:textColor="@color/colorPrimary"
